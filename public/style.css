@@ -88,69 +88,65 @@ button {
     animation: fadein 0.2s, fadeout 0.2s 1s;
   }
   
-  /* Animations to fade the snackbar in and out */
-  @-webkit-keyframes fadein {
+/* Animations to fade the snackbar in and out */
+@-webkit-keyframes fadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 30px; opacity: 1;}
-  }
-  
-  @keyframes fadein {
+}
+
+@keyframes fadein {
     from {bottom: 0; opacity: 0;}
     to {bottom: 30px; opacity: 1;}
-  }
-  
-  @-webkit-keyframes fadeout {
+}
+
+@-webkit-keyframes fadeout {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
-  }
-  
-  @keyframes fadeout {
+}
+
+@keyframes fadeout {
     from {bottom: 30px; opacity: 1;}
     to {bottom: 0; opacity: 0;}
-  }
+}
 
 #hexGrid {
-  display: flex;
-  flex-wrap: wrap;
-  width: 300px;
-  margin: 0 auto;
-  overflow: hidden;
-  font-family: sans-serif;
-  list-style-type: none;
-  margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    width: 300px;
+    margin: 0 auto;
+    overflow: hidden;
+    font-family: sans-serif;
+    margin-top: 15px;
 }
 
 .hex {
-  position: relative;
-  visibility:hidden;
-  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
-  backface-visibility: hidden;
-  will-change: transform;
+    position: relative;
+    visibility:hidden;
+    backface-visibility: hidden;
+    will-change: transform;
 }
 
 .hex::after{
-  content:'';
-  display:block;
-  padding-bottom: 86.602%;  /* =  100 / tan(60) * 1.5 */
+    content:'';
+    display:block;
+    padding-bottom: 86.602%;  /* =  100 / tan(60) * 1.5 */
 }
 
 .hexIn{
-  position: absolute;
-  width:96%;
-  padding-bottom: 110.851%; /* =  width / sin(60) */
-  margin: 2%;
-  overflow: hidden;
-  visibility: hidden;
-  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
-  -webkit-transform: rotate3d(0,0,1,-60deg) skewY(30deg);
-      -ms-transform: rotate3d(0,0,1,-60deg) skewY(30deg);
-          transform: rotate3d(0,0,1,-60deg) skewY(30deg);
+    position: absolute;
+    width:96%;
+    padding-bottom: 110.851%; /* =  width / sin(60) */
+    margin: 2%;
+    overflow: hidden;
+    visibility: hidden;
+    -webkit-transform: rotate3d(0,0,1,-60deg) skewY(30deg);
+        -ms-transform: rotate3d(0,0,1,-60deg) skewY(30deg);
+            transform: rotate3d(0,0,1,-60deg) skewY(30deg);
 }
 
 .hexIn * {
-  position: absolute;
-  visibility: visible;
-  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
+    position: absolute;
+    visibility: visible;
 }
 
 .hexLink {
@@ -167,13 +163,12 @@ button {
 
 
 
-/*** HEX CONTENT **********************************************************************/
+/*** HEX CONTENT *******************************************/
 
 .hex h1, .hex p {
-  width: 100%;
-  padding: 5%;
-  box-sizing:border-box;
-
+    width: 100%;
+    padding: 5%;
+    box-sizing:border-box;
 }
 
 .letter {
@@ -195,6 +190,6 @@ button {
     width: 33.333%; /* = 100 / 3 */
 }
 
-.hex:nth-child(5n-4) { /* first hexagon of even rows */
-    margin-left:16.666%;  /* = width of .hex / 2  to indent even rows */
+.hex:nth-child(5n-4) { 
+    margin-left:16.666%;  /* = width of .hex / 2  to indent odd rows */
 }

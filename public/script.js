@@ -1,8 +1,62 @@
-const letters = ["A", "C", "E", "T", "H", "R"];
+const letters = ["A", "C", "E", "T", "H", "R", "N"];
 const keyLetter = "N";
+const PANGRAM_BONUS = 7;
 var currentWord = '';
 var points = 0;
 var foundWords = [];
+var maxScore = getMaxScore();
+
+const successMessages = [
+    '🐝 un bee lievable 🐝',
+    '🐝 bee-utiful 🐝',
+    '🐝 hive five 🖐️ 🐝',
+    '🐝 sweet like honey 🐝',
+    '🐝 not too sha-bee 🐝',
+    '🐝 thats the bees knees 🐝',
+    '🐝 bumbleicious 🐝',
+    '🐝 im getting buzzed 🐝',
+    '🐝 youre the queen bee 🐝',
+    '🐝 bee mine 🐝'
+]
+
+console.log(pangramDetector('ENCHANTER'));
+
+function scoreWord(word) {
+    let score = 1
+    if (word.length === 4) {
+        return score;
+    } else {
+        score = word.length;
+    }
+    if(pangramDetector(word)){
+        score += PANGRAM_BONUS;
+    }
+    return score;
+}
+
+function pangramDetector(word) {
+    var pangram = true;
+    letters.forEach((letter)=>{
+        if(!word.includes(letter)){
+            pangram = false;
+        }
+    })
+    return pangram;
+}
+
+function getMaxScore() {
+    let re = new RegExp(`^[${letters.join('')}]+$`)
+
+    let valid_words = words.filter((word) => {
+        return re.test(word);
+    });
+
+    var maxScore = valid_words.reduce((acc, word) => {
+        return acc + scoreWord(word);
+    }, 0);
+
+    return maxScore;
+}
 
 function lookup(word) {
     if (words.includes(word)) {
@@ -26,8 +80,7 @@ function renderCurrentWord() {
 }
 
 function renderPoints() {
-    console.log('rendering points');
-    document.querySelector('#scoreboard').textContent = points + ' pts';
+    document.querySelector('#scoreboard').textContent = points + 'pts / ' + maxScore + 'pts possible';
 }
 
 function renderFoundWords() {
@@ -57,17 +110,20 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.querySelectorAll('.key-letter')[0].addEventListener('click', (ev) => {
         currentWord += keyLetter;
         renderCurrentWord();
-    })
+    });
+
+    renderPoints();
 
     document.querySelectorAll('.reg-letter').forEach((el, i) => {
+        if (letters[i] !== keyLetter) {
+            el.innerHTML = '<h1 class="letter">' + letters[i] + '</h1>';
 
-        el.innerHTML = '<h1 class="letter">' + letters[i] + '</h1>';
-
-        el.addEventListener('click', (ev) => {
-            currentWord += letters[i];
-            renderCurrentWord();
-        })
-    })
+            el.addEventListener('click', (ev) => {
+                currentWord += letters[i];
+                renderCurrentWord();
+            })
+        }
+    });
 
     document.querySelector('#enter-btn').addEventListener('click', function (e) {
         if (currentWord.length < 4) {
@@ -92,10 +148,17 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
 
         if (lookup(currentWord)) {
-            points += 2 * currentWord.length;
+            let score = scoreWord(currentWord);
+            points += score;
             foundWords.push(currentWord);
+            
+            if(pangramDetector(currentWord)){
+                flashMsg(`🐝 bzzz...pangram!!! 😲 🐝 +${score}`);
+            } else {
+                flashMsg(`${successMessages[Math.floor(Math.random() * successMessages.length)]} +${score}`);
+            }
+
             currentWord = "";
-            flashMsg('nice bae 👍');
             renderCurrentWord();
             renderPoints();
             renderFoundWords();
@@ -113,3 +176,4 @@ document.addEventListener('DOMContentLoaded', function (event) {
         }
     });
 });
+

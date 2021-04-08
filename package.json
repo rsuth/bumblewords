@@ -1,0 +1,23 @@
+{
+  "name": "bumblewords",
+  "version": "1.0.0",
+  "description": "Create as many (> 3 letter) words as you can, using the given letters.",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rsuth/bumblewords.git"
+  },
+  "author": "rick sutherland",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rsuth/bumblewords/issues"
+  },
+  "homepage": "https://github.com/rsuth/bumblewords#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
