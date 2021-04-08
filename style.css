@@ -1,0 +1,200 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    margin-top: 20px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3em;
+}
+
+#current-word {
+    font-family: sans-serif;
+    font-weight: 700;
+    font-size: 1.5em;
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    margin-top: 15px;
+    height: 20px;
+}
+
+#scoreboard {
+    text-align: center;
+    margin: auto;
+    width: 50%;
+    margin-top: 15px;
+    height: 20px;
+    font-family: sans-serif;
+
+}
+
+.reg-letter {
+    background-color: #e0e0e0;
+}
+
+.key-letter {
+    background-color: #fcd703;
+}
+
+#controls {
+    margin: auto;
+    width: 50%;
+    text-align: center;
+    margin-top: 15px;
+}
+
+button {
+    padding: 8px;
+    font-family: sans-serif;
+    font-size: 1.2em;
+    margin-left: 5px;
+    margin-right: 5px;
+    border-radius: 10px;
+}
+
+#wordlist {
+    width: 50%;
+    margin: auto;
+    text-align: center;
+    margin-top: 15px;
+    list-style-type: none;
+    font-family: sans-serif;
+}
+
+
+#message {
+    visibility: hidden; /* Hidden by default. Visible on click */
+    width: 50%;
+    margin:auto;
+    color: black;
+    text-align: center;
+    border-radius: 2px; 
+    padding: 16px;
+    font-family: sans-serif;
+    font-size: 1.2em;
+    height: 20px;
+  }
+
+#message.show {
+    visibility: visible; /* Show the snackbar */
+    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
+    However, delay the fade out process for 2.5 seconds */
+    -webkit-animation: fadein 0.2s, fadeout 0.2s 1s;
+    animation: fadein 0.2s, fadeout 0.2s 1s;
+  }
+  
+  /* Animations to fade the snackbar in and out */
+  @-webkit-keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+  }
+  
+  @keyframes fadein {
+    from {bottom: 0; opacity: 0;}
+    to {bottom: 30px; opacity: 1;}
+  }
+  
+  @-webkit-keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+  }
+  
+  @keyframes fadeout {
+    from {bottom: 30px; opacity: 1;}
+    to {bottom: 0; opacity: 0;}
+  }
+
+#hexGrid {
+  display: flex;
+  flex-wrap: wrap;
+  width: 300px;
+  margin: 0 auto;
+  overflow: hidden;
+  font-family: sans-serif;
+  list-style-type: none;
+  margin-top: 15px;
+}
+
+.hex {
+  position: relative;
+  visibility:hidden;
+  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
+  backface-visibility: hidden;
+  will-change: transform;
+}
+
+.hex::after{
+  content:'';
+  display:block;
+  padding-bottom: 86.602%;  /* =  100 / tan(60) * 1.5 */
+}
+
+.hexIn{
+  position: absolute;
+  width:96%;
+  padding-bottom: 110.851%; /* =  width / sin(60) */
+  margin: 2%;
+  overflow: hidden;
+  visibility: hidden;
+  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
+  -webkit-transform: rotate3d(0,0,1,-60deg) skewY(30deg);
+      -ms-transform: rotate3d(0,0,1,-60deg) skewY(30deg);
+          transform: rotate3d(0,0,1,-60deg) skewY(30deg);
+}
+
+.hexIn * {
+  position: absolute;
+  visibility: visible;
+  outline:1px solid transparent; /* fix for jagged edges in FF on hover transition */
+}
+
+.hexLink {
+    display:block;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    overflow: hidden;
+    -webkit-transform: skewY(-30deg) rotate3d(0,0,1,60deg);
+        -ms-transform: skewY(-30deg) rotate3d(0,0,1,60deg);
+            transform: skewY(-30deg) rotate3d(0,0,1,60deg);
+}
+
+
+
+
+/*** HEX CONTENT **********************************************************************/
+
+.hex h1, .hex p {
+  width: 100%;
+  padding: 5%;
+  box-sizing:border-box;
+
+}
+
+.letter {
+    color: black;
+    text-transform: capitalize;
+    text-align: center;
+    bottom: 35px;
+    font-size: 1.5em;
+    z-index: 1;
+    font-weight: 725;
+}
+
+#hexGrid {
+    padding-bottom: 4.4%;
+    font-size: 14px;
+}
+
+.hex {
+    width: 33.333%; /* = 100 / 3 */
+}
+
+.hex:nth-child(5n-4) { /* first hexagon of even rows */
+    margin-left:16.666%;  /* = width of .hex / 2  to indent even rows */
+}
