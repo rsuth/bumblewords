@@ -1,10 +1,15 @@
-const letters = ["A", "C", "E", "T", "H", "R", "N"];
-const keyLetter = "N";
 const PANGRAM_BONUS = 7;
+// server always sends key letter last
+const keyLetter = letters[6];
 var currentWord = '';
 var points = 0;
 var foundWords = [];
-var maxScore = getMaxScore();
+var validWords = getValidWords();
+
+var maxWords = validWords.length;
+var maxScore = validWords.reduce((acc, word) => {
+    return acc + scoreWord(word);
+}, 0);
 
 const successMessages = [
     '🐝 un bee lievable 🐝',
@@ -19,8 +24,6 @@ const successMessages = [
     '🐝 bee mine 🐝'
 ]
 
-console.log(pangramDetector('ENCHANTER'));
-
 function scoreWord(word) {
     let score = 1
     if (word.length === 4) {
@@ -28,7 +31,7 @@ function scoreWord(word) {
     } else {
         score = word.length;
     }
-    if(pangramDetector(word)){
+    if (pangramDetector(word)) {
         score += PANGRAM_BONUS;
     }
     return score;
@@ -36,30 +39,26 @@ function scoreWord(word) {
 
 function pangramDetector(word) {
     var pangram = true;
-    letters.forEach((letter)=>{
-        if(!word.includes(letter)){
+    letters.forEach((letter) => {
+        if (!word.includes(letter)) {
             pangram = false;
         }
     })
     return pangram;
 }
 
-function getMaxScore() {
+function getValidWords() {
     let re = new RegExp(`^[${letters.join('')}]+$`)
 
     let valid_words = words.filter((word) => {
         return re.test(word);
     });
 
-    var maxScore = valid_words.reduce((acc, word) => {
-        return acc + scoreWord(word);
-    }, 0);
-
-    return maxScore;
+    return valid_words;
 }
 
-function lookup(word) {
-    if (words.includes(word)) {
+function checkWord(word) {
+    if (validWords.includes(word)) {
         return true;
     } else {
         return false;
@@ -80,7 +79,8 @@ function renderCurrentWord() {
 }
 
 function renderPoints() {
-    document.querySelector('#scoreboard').textContent = points + 'pts / ' + maxScore + 'pts possible';
+    document.querySelector('#scoreboard').textContent = points + 'pts (' + foundWords.length
+        + '/' + validWords.length + ' words found)';
 }
 
 function renderFoundWords() {
@@ -103,6 +103,55 @@ function flashMsg(msg) {
     setTimeout(function () { msgEl.className = msgEl.className.replace("show", ""); }, 1200);
 }
 
+function addLetter(l) {
+    return function () {
+        currentWord += l;
+        renderCurrentWord();
+    }
+}
+
+// TODO: Broken - one tile is not being updated
+// need to rewrite logic in loop
+function shuffleTiles() {
+    if (false) {
+        let tmp = shuffle(letters);
+        document.querySelectorAll('#hexGrid')[0].outerHTML = document.querySelectorAll('#hexGrid')[0].outerHTML;
+
+        document.querySelectorAll('.reg-letter').forEach((el, i) => {
+            if (tmp[i] !== keyLetter) {
+                console.log(tmp[i]);
+                el.innerHTML = '<h1 class="letter">' + tmp[i] + '</h1>';
+                el.addEventListener('click', addLetter(tmp[i]), false);
+            }
+        });
+
+        document.querySelectorAll('.key-letter')[0].addEventListener('click', (ev) => {
+            currentWord += keyLetter;
+            renderCurrentWord();
+        });
+    }
+}
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
+}
+
+
 document.addEventListener('DOMContentLoaded', function (event) {
 
     document.querySelectorAll('.key-letter')[0].innerHTML = '<h1 class="letter">' + keyLetter + '</h1>';
@@ -117,11 +166,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
     document.querySelectorAll('.reg-letter').forEach((el, i) => {
         if (letters[i] !== keyLetter) {
             el.innerHTML = '<h1 class="letter">' + letters[i] + '</h1>';
-
-            el.addEventListener('click', (ev) => {
-                currentWord += letters[i];
-                renderCurrentWord();
-            })
+            el.addEventListener('click', addLetter(letters[i]), false);
         }
     });
 
@@ -147,12 +192,12 @@ document.addEventListener('DOMContentLoaded', function (event) {
             return;
         }
 
-        if (lookup(currentWord)) {
+        if (checkWord(currentWord)) {
             let score = scoreWord(currentWord);
             points += score;
             foundWords.push(currentWord);
-            
-            if(pangramDetector(currentWord)){
+
+            if (pangramDetector(currentWord)) {
                 flashMsg(`🐝 bzzz...pangram!!! 😲 🐝 +${score}`);
             } else {
                 flashMsg(`${successMessages[Math.floor(Math.random() * successMessages.length)]} +${score}`);
@@ -175,5 +220,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             renderCurrentWord();
         }
     });
+
+    document.querySelector('#shuffle-btn').addEventListener('click', shuffleTiles);
 });
 

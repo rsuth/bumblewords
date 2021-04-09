@@ -1,0 +1,44 @@
+doctype html
+html 
+  head 
+    title bumblewords 
+    link(rel='stylesheet', href='style.css')
+  body 
+    h1 bumblewords 
+    div(id='scoreboard')
+    div(id='current-word')
+    div(id='message')
+    div(class='container')
+    - var i = 0;
+    - var k = 0;
+      ul(id='hexGrid')
+        while i < 3
+          li(class='hex')
+            div(class='hexIn')
+              a(class='hexLink reg-letter' href='#')
+                h1(class='letter')
+          - i++;
+        li(class='hex')
+          div(class='hexIn')
+            a(class='hexLink key-letter' href='#')
+              h1(class='letter')
+        while k < 3
+          li(class='hex')
+            div(class='hexIn')
+              a(class='hexLink reg-letter' href='#')
+                h1(class='letter')
+          - k++;
+    div(id='controls')
+      button(id='del-btn') DELETE
+      button(id='shuffle-btn') MIX IT UP
+      button(id='enter-btn') ENTER
+    div
+      ul(id='wordlist')
+    script.
+      const letters = JSON.parse('!{letters}');
+    script(src="words.js")
+    script(src="script.js")  
+
+
+
+        
