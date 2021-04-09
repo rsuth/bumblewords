@@ -51,7 +51,7 @@ function getValidWords() {
     let re = new RegExp(`^[${letters.join('')}]+$`)
 
     let valid_words = words.filter((word) => {
-        return re.test(word);
+        return re.test(word) && word.includes(keyLetter);
     });
 
     return valid_words;
