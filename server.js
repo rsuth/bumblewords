@@ -1,3 +1,5 @@
+const {words} = require('./words.js');
+
 const express = require('express');
 const cron = require('cron');
 const path = require('path');
@@ -35,11 +37,54 @@ function letterGetter() {
     return shuffle(shuffle(consonants).slice(0, 5).concat(shuffle(vowels).slice(0,2)));
 }
 
-var letters = letterGetter();
+function getValidWords(letters) {
+    let re = new RegExp(`^[${letters.join('')}]+$`)
+
+    let valid_words = words.filter((word) => {
+        return re.test(word) && word.includes(letters[6]);
+    });
+
+    return valid_words;
+}
+
+function pangramDetector(letters, word) {
+    var pangram = true;
+    letters.forEach((letter) => {
+        if (!word.includes(letter)) {
+            pangram = false;
+        }
+    })
+    return pangram;
+}
+
+function getTodaysLetters(){
+    let done = false;
+
+    while(!done){
+        let letters = letterGetter();
+        let validWords = getValidWords(letters);
+        
+        let pangram = false;
+        
+        validWords.forEach((w, i)=>{
+            if(pangramDetector(letters, w)){
+                pangram = true;
+            }
+        });
+
+        if(validWords.length > 15 && pangram){
+            done = true;
+            return letters;
+        }
+    }
+
+}
+
+var letters = getTodaysLetters();
 console.log(`got new letters: ${letters}`);
 
 var job = new cron.CronJob('0 0 * * *', () => {
-    letters = letterGetter();
+    letters = getTodaysLetters();
     console.log(`got new letters: ${letters}`);
 }, null, true, 'America/Los_Angeles');
 

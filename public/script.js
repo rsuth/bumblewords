@@ -110,26 +110,23 @@ function addLetter(l) {
     }
 }
 
-// TODO: Broken - one tile is not being updated
-// need to rewrite logic in loop
 function shuffleTiles() {
-    if (false) {
-        let tmp = shuffle(letters);
-        document.querySelectorAll('#hexGrid')[0].outerHTML = document.querySelectorAll('#hexGrid')[0].outerHTML;
+    let tmp = shuffle(letters);
+    let keyIndex = tmp.findIndex((l) => l === keyLetter);
+    
+    // swap so keyLetter is at the end
+    [tmp[keyIndex], tmp[tmp.length-1]] = [tmp[tmp.length-1], tmp[keyIndex]];
+    
+    // rebuild dom - removes events
+    document.querySelectorAll('#hexGrid')[0].outerHTML = document.querySelectorAll('#hexGrid')[0].outerHTML;
 
-        document.querySelectorAll('.reg-letter').forEach((el, i) => {
-            if (tmp[i] !== keyLetter) {
-                console.log(tmp[i]);
-                el.innerHTML = '<h1 class="letter">' + tmp[i] + '</h1>';
-                el.addEventListener('click', addLetter(tmp[i]), false);
-            }
-        });
+    document.querySelectorAll('.reg-letter').forEach((el, i) => {
+        console.log(tmp[i]);
+        el.innerHTML = '<h1 class="letter">' + tmp[i] + '</h1>';
+        el.addEventListener('click', addLetter(tmp[i]), false);
+    });
 
-        document.querySelectorAll('.key-letter')[0].addEventListener('click', (ev) => {
-            currentWord += keyLetter;
-            renderCurrentWord();
-        });
-    }
+    document.querySelectorAll('.key-letter')[0].addEventListener('click', addLetter(keyLetter), false);
 }
 
 function shuffle(array) {
