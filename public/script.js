@@ -24,6 +24,52 @@ const successMessages = [
     '🐝 bee mine 🐝'
 ]
 
+function setCookie(name, value, days = 1, path = '/'){
+    const expires = new Date(Date.now() + days * 864e5).toUTCString()
+    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path
+}
+
+function getCookie(name){
+    return document.cookie.split('; ').reduce((r, v) => {
+        const parts = v.split('=')
+        return parts[0] === name ? decodeURIComponent(parts[1]) : r
+    }, '')
+}
+
+function deleteCookie(name, path = '/'){
+    setCookie(name, '', -1, path)
+}
+
+function saveGame(){
+    deleteCookie('words');
+    deleteCookie('score');
+    setCookie('words', JSON.stringify(foundWords), 1);
+    setCookie('score', points);
+}
+
+function loadGame(){
+    var words = getCookie('words');
+    var score = getCookie('score');
+    
+    if(words && score){ // the cookies exist
+        let savedWords = JSON.parse(words);
+        // check to see if the saved words are from todays game (its 
+        // technically possible two consecutive days could share a few 
+        // valid words but unlikely)
+        if(validWords.includes(savedWords[0])){
+            // load saved state
+            foundWords = savedWords;
+            points = parseInt(score);
+            renderFoundWords();
+            renderPoints();
+        } else {
+            // do nothing, delete these old cookies.
+            deleteCookie('words');
+            deleteCookie('score');
+        }
+    }
+}
+
 function scoreWord(word) {
     let score = 1
     if (word.length === 4) {
@@ -113,15 +159,14 @@ function addLetter(l) {
 function shuffleTiles() {
     let tmp = shuffle(letters);
     let keyIndex = tmp.findIndex((l) => l === keyLetter);
-    
+
     // swap so keyLetter is at the end
-    [tmp[keyIndex], tmp[tmp.length-1]] = [tmp[tmp.length-1], tmp[keyIndex]];
-    
+    [tmp[keyIndex], tmp[tmp.length - 1]] = [tmp[tmp.length - 1], tmp[keyIndex]];
+
     // rebuild dom - removes events
     document.querySelectorAll('#hexGrid')[0].outerHTML = document.querySelectorAll('#hexGrid')[0].outerHTML;
 
     document.querySelectorAll('.reg-letter').forEach((el, i) => {
-        console.log(tmp[i]);
         el.innerHTML = '<h1 class="letter">' + tmp[i] + '</h1>';
         el.addEventListener('click', addLetter(tmp[i]), false);
     });
@@ -150,7 +195,7 @@ function shuffle(array) {
 
 
 document.addEventListener('DOMContentLoaded', function (event) {
-
+    loadGame();
     document.querySelectorAll('.key-letter')[0].innerHTML = '<h1 class="letter">' + keyLetter + '</h1>';
 
     document.querySelectorAll('.key-letter')[0].addEventListener('click', (ev) => {
@@ -204,6 +249,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             renderCurrentWord();
             renderPoints();
             renderFoundWords();
+            saveGame();
         } else {
             flashMsg('word not found :(');
             currentWord = "";

@@ -112,7 +112,8 @@ button {
 #hexGrid {
     display: flex;
     flex-wrap: wrap;
-    width: 300px;
+    width: 30%;
+    max-width: 400px;
     margin: 0 auto;
     overflow: hidden;
     font-family: sans-serif;
@@ -175,7 +176,7 @@ button {
     color: black;
     text-transform: capitalize;
     text-align: center;
-    bottom: 35px;
+    bottom: 35%;
     font-size: 1.5em;
     z-index: 1;
     font-weight: 725;
@@ -193,3 +194,27 @@ button {
 .hex:nth-child(5n-4) { 
     margin-left:16.666%;  /* = width of .hex / 2  to indent odd rows */
 }
+
+/* Portrait and Landscape
+@media only screen 
+  and (min-device-width: 375px) 
+  and (max-device-width: 812px) 
+  and (-webkit-min-device-pixel-ratio: 3) { 
+    #hexgrid {
+        width: 95%;
+        padding-bottom: 150px;
+        font-size: 2.5em;
+    }
+    .letter {
+        bottom: 35%;
+    }
+} */
+
+@media only screen and (max-width: 900px) {
+    #hexGrid {
+        width: 60%;
+        max-width: 900px;
+        padding-bottom: 150px;
+        font-size: 1.4em;
+    }
+  }
