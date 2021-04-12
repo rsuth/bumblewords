@@ -5,7 +5,7 @@ html
     link(rel='stylesheet', href='style.css')
     meta(name="viewport" content="width=device-width, initial-scale=1")
   body 
-    h1 bumblewords 
+    h1(class='noselect') bumblewords 
     div(id='scoreboard')
     div(id='current-word')
     div(id='message')
@@ -17,17 +17,17 @@ html
             li(class='hex')
               div(class='hexIn')
                 a(class='hexLink reg-letter' href='#')
-                  h1(class='letter')
+                  h1(class='letter noselect')
             - i++;
           li(class='hex')
             div(class='hexIn')
               a(class='hexLink key-letter' href='#')
-                h1(class='letter')
+                h1(class='letter noselect')
           while k < 3
             li(class='hex')
               div(class='hexIn')
                 a(class='hexLink reg-letter' href='#')
-                  h1(class='letter')
+                  h1(class='letter noselect')
             - k++;
     div(id='controls')
       button(id='del-btn') DELETE

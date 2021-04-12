@@ -167,7 +167,7 @@ function shuffleTiles() {
     document.querySelectorAll('#hexGrid')[0].outerHTML = document.querySelectorAll('#hexGrid')[0].outerHTML;
 
     document.querySelectorAll('.reg-letter').forEach((el, i) => {
-        el.innerHTML = '<h1 class="letter">' + tmp[i] + '</h1>';
+        el.innerHTML = '<h1 class="letter noselect">' + tmp[i] + '</h1>';
         el.addEventListener('click', addLetter(tmp[i]), false);
     });
 
@@ -196,7 +196,7 @@ function shuffle(array) {
 
 document.addEventListener('DOMContentLoaded', function (event) {
     loadGame();
-    document.querySelectorAll('.key-letter')[0].innerHTML = '<h1 class="letter">' + keyLetter + '</h1>';
+    document.querySelectorAll('.key-letter')[0].innerHTML = '<h1 class="letter noselect">' + keyLetter + '</h1>';
 
     document.querySelectorAll('.key-letter')[0].addEventListener('click', (ev) => {
         currentWord += keyLetter;
@@ -207,14 +207,14 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
     document.querySelectorAll('.reg-letter').forEach((el, i) => {
         if (letters[i] !== keyLetter) {
-            el.innerHTML = '<h1 class="letter">' + letters[i] + '</h1>';
+            el.innerHTML = '<h1 class="letter noselect">' + letters[i] + '</h1>';
             el.addEventListener('click', addLetter(letters[i]), false);
         }
     });
 
     document.querySelector('#enter-btn').addEventListener('click', function (e) {
         if (currentWord.length < 4) {
-            flashMsg("too few letters :(");
+            flashMsg("too few letters 😬");
             currentWord = "";
             renderCurrentWord();
             return;
@@ -222,13 +222,13 @@ document.addEventListener('DOMContentLoaded', function (event) {
 
         if (!currentWord.includes(keyLetter)) {
             currentWord = "";
-            flashMsg('need middle letter :(');
+            flashMsg('need middle letter 😬');
             renderCurrentWord();
             return;
         }
 
         if (foundWords.includes(currentWord)) {
-            flashMsg('already found that one');
+            flashMsg('already found that one 😬 ');
             currentWord = "";
             renderCurrentWord();
             return;
