@@ -210,7 +210,10 @@ button {
     }
 } */
 
-@media only screen and (max-width: 900px) {
+@media only screen 
+    and (device-width : 375px) 
+    and (device-height : 812px) 
+    and (-webkit-device-pixel-ratio : 3) { 
     #hexGrid {
         width: 60%;
         max-width: 900px;
