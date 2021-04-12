@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             renderFoundWords();
             saveGame();
         } else {
-            flashMsg('word not found :(');
+            flashMsg('word not found 😬');
             currentWord = "";
             renderCurrentWord();
         }
