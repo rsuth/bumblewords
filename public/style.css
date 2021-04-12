@@ -9,7 +9,8 @@ body {
 
 h1 {
     text-align: center;
-    font-size: 3em;
+    font-size: 2.5em;
+    font-family: sans-serif;
 }
 
 #current-word {
@@ -19,15 +20,15 @@ h1 {
     margin: auto;
     width: 50%;
     text-align: center;
-    margin-top: 15px;
-    height: 20px;
+    margin-top: 5px;
+    min-height: 1.5em;
 }
 
 #scoreboard {
     text-align: center;
     margin: auto;
-    width: 50%;
-    margin-top: 15px;
+    width: 100%;
+    margin-top: 8px;
     height: 20px;
     font-family: sans-serif;
 
@@ -58,7 +59,6 @@ button {
 }
 
 #wordlist {
-    width: 50%;
     margin: auto;
     text-align: center;
     margin-top: 15px;
@@ -69,15 +69,13 @@ button {
 
 #message {
     visibility: hidden; /* Hidden by default. Visible on click */
-    width: 50%;
+    width: 100%;
     margin:auto;
     color: black;
     text-align: center;
-    border-radius: 2px; 
-    padding: 16px;
     font-family: sans-serif;
-    font-size: 1.2em;
-    height: 20px;
+    font-size: 1em;
+    min-height: 1em;
   }
 
 #message.show {
@@ -183,8 +181,7 @@ button {
 }
 
 #hexGrid {
-    padding-bottom: 4.4%;
-    font-size: 14px;
+    padding-bottom: 60px;
 }
 
 .hex {
@@ -212,9 +209,17 @@ button {
 
 @media only screen and (max-width: 900px) {
     #hexGrid {
-        width: 60%;
+        width: 70%;
         max-width: 900px;
-        padding-bottom: 150px;
-        font-size: 1.4em;
+        padding-bottom: 40px;
     }
-  }
+    #controls {
+        width: 100%;
+    }
+    #message {
+        width: 90%;
+    }
+    .letter {
+        bottom: 30%;
+    }
+}
