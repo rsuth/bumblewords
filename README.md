@@ -7,5 +7,6 @@ All words must include the middle letter in yellow and exist in the scrabble dic
 
 TODO:
 - [x] save game progress (found words) in a cookie.
-- [ ] fix layout to be mobile friendly
+- [x] fix layout to be mobile friendly
 - [ ] dictionary is missing some pretty common words - find new dictionary
+- [ ] add high score page

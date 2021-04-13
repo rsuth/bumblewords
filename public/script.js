@@ -67,6 +67,10 @@ function loadGame(){
             deleteCookie('words');
             deleteCookie('score');
         }
+    } else {
+        // set empty cookies
+        setCookie('words', JSON.stringify(foundWords), 1);
+        setCookie('score', points);
     }
 }
 
@@ -250,6 +254,9 @@ document.addEventListener('DOMContentLoaded', function (event) {
             renderPoints();
             renderFoundWords();
             saveGame();
+            if(foundWords.length === validWords.length){
+                alert("great job! you found all the words!")
+            }
         } else {
             flashMsg('word not found 😬');
             currentWord = "";

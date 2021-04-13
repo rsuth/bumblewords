@@ -1,14 +1,32 @@
 const {words} = require('./words.js');
-
 const express = require('express');
 const cron = require('cron');
 const path = require('path');
 
 const app = express();
+
 app.use(express.static('public'));
+app.use(express.json());
+app.use(express.urlencoded({
+  extended: true
+}));
+
+app.use((req, res, next) => {
+    const { headers: { cookie } } = req;
+    if (cookie) {
+        const values = cookie.split(';').reduce((res, item) => {
+            const data = item.trim().split('=');
+            return { ...res, [data[0]]: data[1] };
+        }, {});
+        res.locals.cookie = values;
+    }
+    else res.locals.cookie = {};
+    next();
+});
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'))
+
 const port = 3000;
 
 function shuffle(array) {
@@ -80,12 +98,29 @@ function getTodaysLetters(){
 
 }
 
+function updateLeaderboard(name, score){
+    if (leaderboard.some(e => e.name === name)) {
+        leaderboard.forEach((e, i)=>{
+            if(e.name === name){
+                console.log(score);
+                leaderboard[i].score = parseInt(score);
+            }
+        })
+        
+    } else {
+        leaderboard.push({name: name, score: parseInt(score)});
+    }
+    leaderboard.sort((a, b) => (a.score > b.score) ? -1 : 1);
+}
+
 var letters = getTodaysLetters();
-console.log(`got new letters: ${letters}`);
+var leaderboard = [];
 
 var job = new cron.CronJob('0 0 * * *', () => {
     letters = getTodaysLetters();
     console.log(`got new letters: ${letters}`);
+    leaderboard = [];
+    console.log('cleared leaderboard');
 }, null, true, 'America/Los_Angeles');
 
 job.start();
@@ -94,7 +129,35 @@ app.get('/', (req, res) => {
     res.render('index', {
         letters: JSON.stringify(letters)
     })
+});
+
+app.get('/leaderboard', (req, res) => {
+    var templateVars = {};
+    
+    if(res.locals.cookie.username && res.locals.cookie.score){
+        console.log(res.locals.cookie.username);
+        updateLeaderboard(res.locals.cookie.username, res.locals.cookie.score);
+        templateVars.leaderboard = leaderboard;
+        templateVars.username = res.locals.cookie.username;
+    } else {
+        templateVars.leaderboard = leaderboard;
+        templateVars.username = "";
+    }
+    res.render('leaderboard', templateVars);
+});
+
+app.post('/leaderboard', (req, res)=>{
+    console.log(`${req.body.username} posted a new score to the leaderboard: ${res.locals.cookie.score}`);
+    
+    updateLeaderboard(req.body.username, res.locals.cookie.score);
+
+    res.render('leaderboard', {
+        leaderboard: leaderboard,
+        hasUser: true,
+        username: req.body.username
+    });
 })
+
 
 app.listen(port, () => {
     console.log(`listening on port ${port}`);

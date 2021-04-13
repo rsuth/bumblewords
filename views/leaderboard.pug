@@ -1,0 +1,24 @@
+doctype html
+html 
+  head 
+    title bumblewords 
+    link(rel='stylesheet', href='style.css')
+    meta(name="viewport" content="width=device-width, initial-scale=1")
+  body 
+    h1(class='noselect') bumblewords
+    nav 
+        a(href='/') back
+    if !hasUser
+        form(id="name-form" action="/leaderboard", method="post")
+            label(for="username") your name:  
+            input(type="text", id="username" name="username", required)
+            input(type="submit", value="submit")
+    ul(id='leaderboard')
+        each entry in leaderboard
+            - var thisUser = (username === entry.name);
+            - var crown = (entry.name === leaderboard[0].name) ? "👑" : "";
+            li(class= thisUser ? "leader-entry this-user" : "leader-entry")
+                span(class="crown")= crown
+                span(class="userscore")= entry.score
+                span(class="username")= entry.name
+    script(src="leaderboard.js") 

@@ -14,6 +14,10 @@ h1 {
     font-family: sans-serif;
 }
 
+nav {
+    text-align: center;
+}
+
 #current-word {
     font-family: sans-serif;
     font-weight: 700;
@@ -200,8 +204,30 @@ button {
           -ms-user-select: none; /* Internet Explorer/Edge */
               user-select: none; /* Non-prefixed version, currently
                                     supported by Chrome, Edge, Opera and Firefox */
-  }
+}
 
+#name-form {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#leaderboard{
+    margin: auto;
+    margin-top: 20px;
+    list-style: none;
+    width: 300px;
+}
+
+.this-user{
+    color: rgb(9, 146, 9);
+}
+
+.leader-entry {
+    display: grid;
+    grid-template-columns: 40px 50px 220px;
+    font-size: 1.5em;
+    align-items: center;
+}
 
 @media only screen and (max-width: 900px) {
     #hexGrid {
