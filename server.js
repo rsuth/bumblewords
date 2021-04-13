@@ -102,8 +102,10 @@ function updateLeaderboard(name, score){
     if (leaderboard.some(e => e.name === name)) {
         leaderboard.forEach((e, i)=>{
             if(e.name === name){
-                console.log(score);
-                leaderboard[i].score = parseInt(score);
+                let parsedScore = parseInt(score);
+                if(!Number.isNaN(parsedScore)){
+                    leaderboard[i].score = parsedScore;
+                }
             }
         })
         
@@ -126,6 +128,11 @@ var job = new cron.CronJob('0 0 * * *', () => {
 job.start();
 
 app.get('/', (req, res) => {
+    if(res.locals.cookie.username){
+        console.log(`get / from ${res.locals.cookie.username}`);
+    } else {
+        console.log('connection from new user');
+    }
     res.render('index', {
         letters: JSON.stringify(letters)
     })
@@ -135,7 +142,6 @@ app.get('/leaderboard', (req, res) => {
     var templateVars = {};
     
     if(res.locals.cookie.username && res.locals.cookie.score){
-        console.log(res.locals.cookie.username);
         updateLeaderboard(res.locals.cookie.username, res.locals.cookie.score);
         templateVars.leaderboard = leaderboard;
         templateVars.username = res.locals.cookie.username;
@@ -148,8 +154,9 @@ app.get('/leaderboard', (req, res) => {
 
 app.post('/leaderboard', (req, res)=>{
     console.log(`${req.body.username} posted a new score to the leaderboard: ${res.locals.cookie.score}`);
-    
-    updateLeaderboard(req.body.username, res.locals.cookie.score);
+    if(res.locals.cookie.score !== undefined){
+        updateLeaderboard(req.body.username, res.locals.cookie.score);
+    }
 
     res.render('leaderboard', {
         leaderboard: leaderboard,
