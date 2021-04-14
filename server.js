@@ -13,7 +13,6 @@ const MIN_VALID_WORDS = 20;
 const PANGRAM_BONUS = 7;
 
 app.use(express.static('public'));
-app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(loggerMiddleware);
