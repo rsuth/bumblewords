@@ -41,8 +41,9 @@ html
     div
       ul(id='wordlist')
     script.
-      const letters = JSON.parse('!{letters}');
-    script(src="words.js")
+      const LETTERS = JSON.parse('!{letters}');
+      const VALID_WORDS = JSON.parse('!{validWords}');
+      const PANGRAM_BONUS = #{pangramBonus};
     script(src="script.js")  
 
 

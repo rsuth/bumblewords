@@ -1,13 +1,11 @@
-const PANGRAM_BONUS = 7;
 // server always sends key letter last
-const keyLetter = letters[6];
+const keyLetter = LETTERS[6];
 var currentWord = '';
 var points = 0;
 var foundWords = [];
-var validWords = getValidWords();
 
-var maxWords = validWords.length;
-var maxScore = validWords.reduce((acc, word) => {
+var maxWords = VALID_WORDS.length;
+var maxScore = VALID_WORDS.reduce((acc, word) => {
     return acc + scoreWord(word);
 }, 0);
 
@@ -80,7 +78,7 @@ function loadGame(){
         // check to see if the saved words are from todays game (its 
         // technically possible two consecutive days could share a few 
         // valid words but unlikely)
-        if(validWords.includes(savedWords[0])){
+        if(VALID_WORDS.includes(savedWords[0])){
             // load saved state
             foundWords = savedWords;
             points = parseInt(score);
@@ -115,7 +113,7 @@ function scoreWord(word) {
 
 function pangramDetector(word) {
     var pangram = true;
-    letters.forEach((letter) => {
+    LETTERS.forEach((letter) => {
         if (!word.includes(letter)) {
             pangram = false;
         }
@@ -123,18 +121,8 @@ function pangramDetector(word) {
     return pangram;
 }
 
-function getValidWords() {
-    let re = new RegExp(`^[${letters.join('')}]+$`)
-
-    let valid_words = words.filter((word) => {
-        return re.test(word) && word.includes(keyLetter);
-    });
-
-    return valid_words;
-}
-
 function checkWord(word) {
-    if (validWords.includes(word)) {
+    if (VALID_WORDS.includes(word)) {
         return true;
     } else {
         return false;
@@ -156,7 +144,7 @@ function renderCurrentWord() {
 
 function renderPoints() {
     document.querySelector('#scoreboard').textContent = points + 'pts (' + foundWords.length
-        + '/' + validWords.length + ' words found)';
+        + '/' + VALID_WORDS.length + ' words found)';
 }
 
 function renderFoundWords() {
@@ -187,7 +175,7 @@ function addLetter(l) {
 }
 
 function shuffleTiles() {
-    let tmp = shuffle(letters);
+    let tmp = shuffle(LETTERS);
     let keyIndex = tmp.findIndex((l) => l === keyLetter);
 
     // swap so keyLetter is at the end
@@ -236,15 +224,15 @@ document.addEventListener('DOMContentLoaded', function (event) {
     renderPoints();
 
     document.querySelectorAll('.reg-letter').forEach((el, i) => {
-        if (letters[i] !== keyLetter) {
-            el.innerHTML = '<h1 class="letter noselect">' + letters[i] + '</h1>';
-            el.addEventListener('click', addLetter(letters[i]), false);
+        if (LETTERS[i] !== keyLetter) {
+            el.innerHTML = '<h1 class="letter noselect">' + LETTERS[i] + '</h1>';
+            el.addEventListener('click', addLetter(LETTERS[i]), false);
         }
     });
 
     document.querySelector('#enter-btn').addEventListener('click', function (e) {
         if (currentWord.length < 4) {
-            flashMsg("too few letters 😬");
+            flashMsg("too few LETTERS 😬");
             currentWord = "";
             renderCurrentWord();
             return;
@@ -281,7 +269,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             renderFoundWords();
             saveGame();
             postData('/update');
-            if(foundWords.length === validWords.length){
+            if(foundWords.length === VALID_WORDS.length){
                 alert("great job! you found all the words!")
             }
         } else {

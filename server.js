@@ -1,5 +1,4 @@
-import { dictionary } from './dictionary.js';
-import { loggerMiddleware, getLetterSet, updateLeaderboard, scoreWords } from './utils.js';
+import { loggerMiddleware, getLetterSet, scoreWords, getValidWords, loadDictionary} from './utils.js';
 import express from 'express';
 import { CronJob } from 'cron';
 import path from 'path';
@@ -10,6 +9,9 @@ import cookieParser from 'cookie-parser';
 const app = express();
 const port = 3000;
 
+const MIN_VALID_WORDS = 20;
+const PANGRAM_BONUS = 7;
+
 app.use(express.static('public'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -18,7 +20,10 @@ app.use(loggerMiddleware);
 app.set('view engine', 'pug');
 app.set('views', path.join(path.resolve(), 'views'))
 
-var letters = getLetterSet(dictionary);
+const dictionary = loadDictionary('dictionary.txt');
+
+var letters = getLetterSet(dictionary, MIN_VALID_WORDS);
+var validWords = getValidWords(letters,dictionary);
 
 var db = new nedb({ filename: path.join(path.resolve(), 'leaderboard.db'), autoload: true });
 db.ensureIndex({ fieldName: 'userId', unique: true }, function (err) {
@@ -26,7 +31,8 @@ db.ensureIndex({ fieldName: 'userId', unique: true }, function (err) {
 });
 
 var job = new CronJob('0 0 * * *', () => {
-    letters = getLetterSet(dictionary);
+    letters = getLetterSet(dictionary, MIN_VALID_WORDS);
+    validWords = getValidWords(letters,dictionary);
 }, null, true, 'America/Los_Angeles');
 
 job.start();
@@ -35,7 +41,9 @@ job.start();
 
 app.get('/', (req, res) => {
     res.render('index', {
-        letters: JSON.stringify(letters)
+        letters: JSON.stringify(letters),
+        validWords: JSON.stringify(validWords),
+        pangramBonus: PANGRAM_BONUS
     })
 });
 

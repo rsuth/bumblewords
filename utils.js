@@ -1,3 +1,5 @@
+import {readFileSync} from 'fs';
+
 const shuffle = (array) => {
     var currentIndex = array.length, temporaryValue, randomIndex;
 
@@ -17,6 +19,11 @@ const shuffle = (array) => {
     return array;
 };
 
+export const loadDictionary = (dictFile) => {
+    var tmp = readFileSync(dictFile, 'utf8')
+    return tmp.split('\n');
+}
+
 const letterGetter = () => {
     let consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
     let vowels = ['A', 'E', 'I', 'O'];
@@ -24,7 +31,7 @@ const letterGetter = () => {
     return shuffle(shuffle(consonants).slice(0, 5).concat(shuffle(vowels).slice(0, 2)));
 };
 
-const getValidWords = (letters, dictionary) => {
+export const getValidWords = (letters, dictionary) => {
     let re = new RegExp(`^[${letters.join('')}]+$`)
 
     let valid_words = dictionary.filter((word) => {
@@ -74,14 +81,15 @@ const scoreWord = (letters, word, pangramBonus) => {
 }
 
 
-export const scoreWords = (letters, words, dictionary) => {
+export const scoreWords = (letters, words, validWords) => {
     let score = words.reduce((acc, word) => {
-        if(dictionary.includes(word)){
+        if (validWords.includes(word)) {
             return acc + scoreWord(letters, word, 7);
         }
     }, 0);
     return score;
 }
+
 
 const pangramDetector = (letters, word) => {
     var pangram = true;
@@ -93,7 +101,10 @@ const pangramDetector = (letters, word) => {
     return pangram;
 };
 
-export const getLetterSet = (dictionary) => {
+// function to get a good letter set.
+// Good means there are at least <minimumWords> valid words
+// and at least one pangram.
+export const getLetterSet = (dictionary, minimumWords) => {
     let done = false;
 
     while (!done) {
@@ -108,7 +119,7 @@ export const getLetterSet = (dictionary) => {
             }
         });
 
-        if (validWords.length > 15 && pangram) {
+        if (validWords.length > minimumWords && pangram) {
             done = true;
             return letters;
         }
