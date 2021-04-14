@@ -19,7 +19,6 @@ app.set('view engine', 'pug');
 app.set('views', path.join(path.resolve(), 'views'))
 
 var letters = getLetterSet(dictionary);
-var leaderboard = [];
 
 var db = new nedb({ filename: path.join(path.resolve(), 'leaderboard.db'), autoload: true });
 db.ensureIndex({ fieldName: 'userId', unique: true }, function (err) {
@@ -28,7 +27,6 @@ db.ensureIndex({ fieldName: 'userId', unique: true }, function (err) {
 
 var job = new CronJob('0 0 * * *', () => {
     letters = getLetterSet(dictionary);
-    leaderboard = [];
 }, null, true, 'America/Los_Angeles');
 
 job.start();
