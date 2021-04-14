@@ -8,17 +8,18 @@ html
     h1(class='noselect') bumblewords
     nav 
         a(href='/') back
-    if !hasUser
-        form(id="name-form" action="/leaderboard", method="post")
-            label(for="username") your name:  
-            input(type="text", id="username" name="username", required)
-            input(type="submit", value="submit")
+    - var nickname = leaderboard.find(doc => doc.userId === userId) ? leaderboard.find(doc => doc.userId === userId).nickname : 'anonymous user'
+    if showNickForm
+      form(id="name-form" action="/leaderboard", method="post")
+          label(for="username") your nickname:  
+          input(type="text", id="username" name="username", value= nickname required)
+          input(type="submit", value="submit")
     ul(id='leaderboard')
         each entry in leaderboard
-            - var thisUser = (username === entry.name);
-            - var crown = (entry.name === leaderboard[0].name) ? "👑" : "";
+            - var thisUser = (userId === entry.userId);
+            - var crown = (entry.userId === leaderboard[0].userId) ? "👑" : "";
             li(class= thisUser ? "leader-entry this-user" : "leader-entry")
                 span(class="crown")= crown
                 span(class="userscore")= entry.score
-                span(class="username")= entry.name
+                span(class="username")= entry.nickname
     script(src="leaderboard.js") 

@@ -1,171 +1,102 @@
-const {words} = require('./words.js');
-const express = require('express');
-const cron = require('cron');
-const path = require('path');
+import { dictionary } from './dictionary.js';
+import { loggerMiddleware, getLetterSet, updateLeaderboard, scoreWords } from './utils.js';
+import express from 'express';
+import { CronJob } from 'cron';
+import path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import nedb from 'nedb';
+import cookieParser from 'cookie-parser';
 
 const app = express();
+const port = 3000;
 
 app.use(express.static('public'));
 app.use(express.json());
-app.use(express.urlencoded({
-  extended: true
-}));
-
-app.use((req, res, next) => {
-    const { headers: { cookie } } = req;
-    if (cookie) {
-        const values = cookie.split(';').reduce((res, item) => {
-            const data = item.trim().split('=');
-            return { ...res, [data[0]]: data[1] };
-        }, {});
-        res.locals.cookie = values;
-    }
-    else res.locals.cookie = {};
-    next();
-});
-
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(loggerMiddleware);
 app.set('view engine', 'pug');
-app.set('views', path.join(__dirname, 'views'))
+app.set('views', path.join(path.resolve(), 'views'))
 
-const port = 3000;
-
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-
-function letterGetter() {
-    let consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
-    let vowels = ['A', 'E', 'I', 'O'];
-    
-    return shuffle(shuffle(consonants).slice(0, 5).concat(shuffle(vowels).slice(0,2)));
-}
-
-function getValidWords(letters) {
-    let re = new RegExp(`^[${letters.join('')}]+$`)
-
-    let valid_words = words.filter((word) => {
-        return re.test(word) && word.includes(letters[6]);
-    });
-
-    return valid_words;
-}
-
-function pangramDetector(letters, word) {
-    var pangram = true;
-    letters.forEach((letter) => {
-        if (!word.includes(letter)) {
-            pangram = false;
-        }
-    })
-    return pangram;
-}
-
-function getTodaysLetters(){
-    let done = false;
-
-    while(!done){
-        let letters = letterGetter();
-        let validWords = getValidWords(letters);
-        
-        let pangram = false;
-        
-        validWords.forEach((w, i)=>{
-            if(pangramDetector(letters, w)){
-                pangram = true;
-            }
-        });
-
-        if(validWords.length > 15 && pangram){
-            done = true;
-            return letters;
-        }
-    }
-
-}
-
-function updateLeaderboard(name, score){
-    if (leaderboard.some(e => e.name === name)) {
-        leaderboard.forEach((e, i)=>{
-            if(e.name === name){
-                let parsedScore = parseInt(score);
-                if(!Number.isNaN(parsedScore)){
-                    leaderboard[i].score = parsedScore;
-                }
-            }
-        })
-        
-    } else {
-        leaderboard.push({name: name, score: parseInt(score)});
-    }
-    leaderboard.sort((a, b) => (a.score > b.score) ? -1 : 1);
-}
-
-var letters = getTodaysLetters();
+var letters = getLetterSet(dictionary);
 var leaderboard = [];
 
-var job = new cron.CronJob('0 0 * * *', () => {
-    letters = getTodaysLetters();
-    console.log(`got new letters: ${letters}`);
+var db = new nedb({ filename: path.join(path.resolve(), 'leaderboard.db'), autoload: true });
+db.ensureIndex({ fieldName: 'userId', unique: true }, function (err) {
+    if (err) { console.error(`nedb error ensureIndex: ${err}`); };
+});
+
+var job = new CronJob('0 0 * * *', () => {
+    letters = getLetterSet(dictionary);
     leaderboard = [];
-    console.log('cleared leaderboard');
 }, null, true, 'America/Los_Angeles');
 
 job.start();
 
+// routes=====================================//
+
 app.get('/', (req, res) => {
-    if(res.locals.cookie.username){
-        console.log(`get / from ${res.locals.cookie.username}`);
-    } else {
-        console.log('connection from new user');
-    }
     res.render('index', {
         letters: JSON.stringify(letters)
     })
 });
 
-app.get('/leaderboard', (req, res) => {
-    var templateVars = {};
+function createNewUser(db, words, score) {
+    let userId = uuidv4().slice(0, 8);
+    db.insert({
+        date: new Date(),
+        userId: userId,
+        nickname: 'anonymous user',
+        words: words,
+        score: score
+    });
+    return userId
+}
+
+app.post('/update', (req, res) => {
+    let words = req.cookies.words ? JSON.parse(req.cookies.words) : [];
+    let score = scoreWords(letters, words, dictionary);
     
-    if(res.locals.cookie.username && res.locals.cookie.score){
-        updateLeaderboard(res.locals.cookie.username, res.locals.cookie.score);
-        templateVars.leaderboard = leaderboard;
-        templateVars.username = res.locals.cookie.username;
+    if (!req.cookies.userId) {
+        let midnight = new Date();
+        midnight.setHours(23, 59, 59, 0);
+        let userId = createNewUser(db, words, score);
+        res.cookie('userId', userId, { expires: midnight });
     } else {
-        templateVars.leaderboard = leaderboard;
-        templateVars.username = "";
+        db.update({ userId: req.cookies.userId }, { $set: { words: words } }, {}, () => {
+            db.update({ userId: req.cookies.userId }, { $set: { score: score } });
+        });
     }
-    res.render('leaderboard', templateVars);
+    res.send({score: score});
 });
 
-app.post('/leaderboard', (req, res)=>{
-    console.log(`${req.body.username} posted a new score to the leaderboard: ${res.locals.cookie.score}`);
-    if(res.locals.cookie.score !== undefined){
-        updateLeaderboard(req.body.username, res.locals.cookie.score);
-    }
+app.get('/leaderboard', (req, res) => {
+    let thisUsersId = req.cookies.userId ? req.cookies.userId : "";    
+    db.find({date: { $gt: new Date(new Date().setHours(0,0,0,0))}}).sort({score: -1}).exec((err, docs)=>{
+        res.render('leaderboard', {
+            userId: thisUsersId,
+            leaderboard: docs,
+            showNickForm: (thisUsersId.length > 0)
+        })
+    })
+});
 
-    res.render('leaderboard', {
-        leaderboard: leaderboard,
-        hasUser: true,
-        username: req.body.username
+app.post('/leaderboard', (req, res) => {
+    let nick = req.body.username.replace(/[\/\\#,+()~%.'":*?<>{}]/g, '').slice(0,25);
+    let thisUsersId = req.cookies.userId ? req.cookies.userId : "";    
+
+    db.update({ userId: req.cookies.userId }, { $set: {nickname: nick }}, {}, ()=>{
+        db.find({date: { $gt: new Date(new Date().setHours(0,0,0,0))}}).sort({score: -1}).exec((err, docs)=>{
+            res.render('leaderboard', {
+                userId: thisUsersId,
+                leaderboard: docs,
+                showNickForm: (thisUsersId.length > 0)
+            })
+        })
     });
-})
 
+});
 
 app.listen(port, () => {
-    console.log(`listening on port ${port}`);
-})
+    console.log(`starting server on ${port}`);
+});

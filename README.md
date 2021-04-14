@@ -16,3 +16,5 @@ TODO:
 - [ ] FEATURE: leaderboard and letters are stored in memory - database? textfile on server? (overkill?)
 - [ ] FEATURE: login/user accounts? game history/charting (too much hassle)?
 - [ ] REFACTOR: code/logic is quick and dirty, needs validation, code is inconsistant, lots of global variables
+- [ ] FEATURE: better logging on server
+- [ ] 

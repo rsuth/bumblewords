@@ -24,8 +24,8 @@ const successMessages = [
     '🐝 bee mine 🐝'
 ]
 
-function setCookie(name, value, days = 1, path = '/'){
-    const expires = new Date(Date.now() + days * 864e5).toUTCString()
+function setCookie(name, value, exp, path = '/'){
+    const expires = exp.toUTCString()
     document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path
 }
 
@@ -37,14 +37,38 @@ function getCookie(name){
 }
 
 function deleteCookie(name, path = '/'){
-    setCookie(name, '', -1, path)
+    setCookie(name, '', new Date(Date.now() + -1 * 864e5), path)
 }
 
+// Example POST method implementation:
+async function postData(url = '', data = {}) {
+    // Default options are marked with *
+    const response = await fetch(url, {
+      method: 'POST', // *GET, POST, PUT, DELETE, etc.
+      mode: 'cors', // no-cors, *cors, same-origin
+      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
+      credentials: 'same-origin', // include, *same-origin, omit
+      headers: {
+        'Content-Type': 'application/json'
+        // 'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      redirect: 'follow', // manual, *follow, error
+      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+      body: JSON.stringify(data) // body data type must match "Content-Type" header
+    });
+    return response.json(); // parses JSON response into native JavaScript objects
+  }
+  
+
 function saveGame(){
+    let midnight = new Date();
+    midnight.setHours(23,59,59,0);
+    
     deleteCookie('words');
     deleteCookie('score');
-    setCookie('words', JSON.stringify(foundWords), 1);
-    setCookie('score', points);
+    
+    setCookie('words', JSON.stringify(foundWords), midnight);
+    setCookie('score', points, midnight);
 }
 
 function loadGame(){
@@ -68,9 +92,11 @@ function loadGame(){
             deleteCookie('score');
         }
     } else {
+        let midnight = new Date();
+        midnight.setHours(23,59,59,0);
         // set empty cookies
-        setCookie('words', JSON.stringify(foundWords), 1);
-        setCookie('score', points);
+        setCookie('words', JSON.stringify(foundWords), midnight);
+        setCookie('score', points, midnight);
     }
 }
 
@@ -254,6 +280,7 @@ document.addEventListener('DOMContentLoaded', function (event) {
             renderPoints();
             renderFoundWords();
             saveGame();
+            postData('/update');
             if(foundWords.length === validWords.length){
                 alert("great job! you found all the words!")
             }
