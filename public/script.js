@@ -150,9 +150,21 @@ function renderPoints() {
 function renderFoundWords() {
     var foundEl = document.getElementById('wordlist');
     foundEl.innerHTML = "";
+    foundWords = foundWords.sort();
     foundWords.forEach((w, i) => {
+        let html = "";
+        for(let i = 0; i < w.length; i++){
+            if(w[i] === keyLetter){
+                html += `<span style="color:#fcd703">${w[i]}</span>`; 
+            } else {
+                html += w[i];
+            }
+        }
+        if(pangramDetector(w)){
+            html = `✨${html}✨`
+        }
         var li = document.createElement('li');
-        li.appendChild(document.createTextNode(w));
+        li.innerHTML = html;
         foundEl.appendChild(li);
     })
 }
