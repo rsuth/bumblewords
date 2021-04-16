@@ -198,18 +198,11 @@ function shuffleTiles() {
 
     document.querySelectorAll('.reg-tile').forEach((el, i) => {
         el.childNodes[0].textContent = tmp[i];
-        
         el.addEventListener('click', addLetter(tmp[i]), false);
-        el.childNodes.forEach((n, j) => {
-            n.addEventListener('click', addLetter(tmp[i]), false);
-        });
     });
 
     var keyTileEl = document.querySelector('#key-tile');
     keyTileEl.addEventListener('click', addLetter(keyLetter), false);
-    keyTileEl.childNodes.forEach((el, i) => {
-        el.addEventListener('click', addLetter(keyLetter));
-    })
 }
 
 function shuffle(array) {

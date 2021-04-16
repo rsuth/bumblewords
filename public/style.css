@@ -43,6 +43,10 @@ h1 {
     padding-top: 32px;
 }
 
+#controls {
+    margin-top: -15px;
+}
+
 #controls button {
     padding: 8px;
     font-size: 1.2em;
@@ -106,7 +110,12 @@ h1 {
         margin-top: 8px;
     }
     #wordlist {
-        height: 140px;
+        height: 160px;
         overflow-y: scroll;
+    }
+    #message {
+        font-size: 1em;
+        height: 1em;
+        margin-bottom: 5px;
     }
 }
