@@ -28,7 +28,7 @@ h1 {
 }
 
 #message {
-    /* visibility: hidden; */
+    visibility: hidden;
     font-size: 1.2em;
     height: 1.3em;
     margin-bottom: 10px;
