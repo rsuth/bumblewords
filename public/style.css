@@ -28,7 +28,7 @@ h1 {
 }
 
 #message {
-    visibility: hidden;
+    /* visibility: hidden; */
     font-size: 1.2em;
     height: 1.3em;
     margin-bottom: 10px;
@@ -117,8 +117,14 @@ h1 {
         height: 160px;
         overflow-y: scroll;
     }
+    #current-word {
+        font-size: 1.3em;
+        height: 1.4em;
+        line-height: 1.4em;
+    }
     #message {
         font-size: 1em;
+        line-height: 1em;
         height: 1em;
         margin-bottom: 5px;
     }
