@@ -1,52 +1,77 @@
 doctype html
-html 
-  head 
-    title bumblewords 
-    link(rel="apple-touch-icon" href="apple-touch-icon.png")
-    link(rel="shortcut icon" type="image/jpg" href="favicon.ico")
-    link(rel='stylesheet', href='style.css')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-  body 
-    h1(class='noselect') bumblewords
-    nav 
-      a(href='/leaderboard') leaderboard
-      |  | 
-      | 
-      a(href='https://github.com/rsuth/bumblewords') github
-    div(id='scoreboard')
-    div(id='current-word')
-    div(id='message')
-    div(class='container')
-      - var i = 0;
-      - var k = 0;
-        ul(id='hexGrid')
-          while i < 3
-            li(class='hex')
-              div(class='hexIn')
-                a(class='hexLink reg-letter' href='#')
-                  h1(class='letter noselect')
-            - i++;
-          li(class='hex')
-            div(class='hexIn')
-              a(class='hexLink key-letter' href='#')
-                h1(class='letter noselect')
-          while k < 3
-            li(class='hex')
-              div(class='hexIn')
-                a(class='hexLink reg-letter' href='#')
-                  h1(class='letter noselect')
-            - k++;
-    div(id='controls')
-      button(id='del-btn') DELETE
-      button(id='shuffle-btn') 🔄
-      button(id='enter-btn') ENTER
-    div
-      ul(id='wordlist')
-    script.
-      const LETTERS = JSON.parse('!{letters}');
-      const VALID_WORDS = JSON.parse('!{validWords}');
-      const PANGRAM_BONUS = #{pangramBonus};
-    script(src="script.js")  
+head
+  meta(charset='UTF-8')
+  meta(http-equiv='X-UA-Compatible' content='IE=edge')
+  meta(name='viewport' content='width=device-width, initial-scale=1.0')
+  title bumblewords
+  link(rel='stylesheet' href='style.css')
+  link(rel='stylesheet' href='hexGrid.css')
+  link(rel="icon" type='img/png' href="img/favicon.ico")
+body
+  h1 bumblewords
+  nav
+    a(href='/leaderboard') leaderboard
+    |  | 
+    a(href='https://github.com/rsuth/bumblewords') github
+  #scoreboard
+  #current-word
+  #message
+  .hexGridContainer.noselect
+    .hexrow
+      .reg-tile
+        span.tileLetter 1
+        <div></div>
+        <div></div>
+      | !{' '}
+      .reg-tile
+        span.tileLetter 2
+        <div></div>
+        <div></div>      
+      | !{' '} 
+      .reg-tile
+        span.tileLetter 3
+        <div></div>
+        <div></div>
+    .hexrow
+      .reg-tile
+        span.tileLetter 4
+        div
+        div
+      | !{' '} 
+      #key-tile
+        span.tileLetter 5
+        <div></div>
+        <div></div>
+      | !{' '} 
+      .reg-tile
+        span.tileLetter 6
+        <div></div>
+        <div></div> 
+    .hexrow
+      .dummy-hex
+        span.tileLetter 7
+        <div></div>
+        <div></div>
+      | !{' '} 
+      .reg-tile
+        span.tileLetter 8
+        <div></div>
+        <div></div>
+      | !{' '} 
+      .dummy-hex
+        span.tileLetter 9
+        <div></div>
+        <div></div>
+  #controls
+    button#del-btn DELETE
+    button#shuffle-btn &#x1F504;
+    button#enter-btn ENTER
+  ul#wordlist
+  script.
+    const LETTERS = JSON.parse('!{letters}');
+    const VALID_WORDS = JSON.parse('!{validWords}');
+    const PANGRAM_BONUS = #{pangramBonus};
+  script(src="script.js")  
 
 
 

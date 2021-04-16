@@ -3,6 +3,7 @@ html
   head 
     title bumblewords 
     link(rel='stylesheet', href='style.css')
+    link(rel='stylesheet', href='leaderboard.css')
     meta(name="viewport" content="width=device-width, initial-scale=1")
   body 
     h1(class='noselect') bumblewords
@@ -22,4 +23,3 @@ html
                 span(class="crown")= crown
                 span(class="userscore")= entry.score
                 span(class="username")= entry.nickname
-    script(src="leaderboard.js") 

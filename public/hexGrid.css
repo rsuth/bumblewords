@@ -1,0 +1,143 @@
+:root {
+    --hexWidth: 70px
+}
+
+
+.hexrow {
+    white-space: nowrap;
+    /*right/left margin set at (( width of child div x sin(30) ) / 2) makes a fairly tight fit; a 3px bottom seems to match*/
+    margin: 0 25px 3px; 
+}
+
+.hexrow > div {
+    width: var(--hexWidth);
+    height: calc(var(--hexWidth) * .866 * 2); /* ( width x cos(30) ) x 2 */
+    /* For margin:
+    right/left = ( width x sin(30) ) makes no overlap 
+    right/left = (( width x sin(30) ) / 2) leaves a narrow separation
+    */
+    margin: 0 calc(var(--hexWidth)*.25);
+    position: relative;
+    background-image: url(img/grey.png);
+    background-position: calc(-1*var(--hexWidth) * .5) 0; /* -left position -1 x width x sin(30) */
+    background-repeat: no-repeat;
+    background-size: auto 120%;
+
+    text-align: center;
+    line-height: calc(var(--hexWidth) * .866 * 2); /*equals height*/
+    display: inline-block;
+}
+
+.hexrow > div:nth-child(odd) {
+    top: calc(var(--hexWidth) * .866 * .5); /* ( width x cos(30) / 2 ) */
+}
+
+.hexrow > div:nth-child(even) {
+    top: calc(-1 * (var(--hexWidth) * .866 * .5) - 1.5px); /* -1 x( ( width x cos(30) / 2) + (hexrow bottom margin / 2)) */ 
+}
+
+.hexrow > div > div:first-of-type {
+    position: absolute;
+    width: 100%;
+    height: 100%; 
+    top: 0;
+    left: 0;
+    z-index: -1;
+    overflow: hidden;
+    background-image: inherit;
+    
+    -ms-transform:rotate(60deg); /* IE 9 */
+    -moz-transform:rotate(60deg); /* Firefox */
+    -webkit-transform:rotate(60deg); /* Safari and Chrome */
+    -o-transform:rotate(60deg); /* Opera */
+    transform:rotate(60deg);
+}
+
+.hexrow > div > div:first-of-type:before {
+    content: '';
+    position: absolute;
+    width: 200px; /* width of main + margin sizing */
+    height: 100%;
+    background-image: inherit;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: auto 120%;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    
+    -ms-transform:rotate(-60deg) translate(-150px, 0); /* IE 9 */
+    -moz-transform:rotate(-60deg) translate(-150px, 0); /* Firefox */
+    -webkit-transform:rotate(-60deg) translate(-150px, 0); /* Safari and Chrome */
+    -o-transform:rotate(-60deg) translate(-150px, 0); /* Opera */
+    transform:rotate(-60deg) translate(-150px, 0);
+    
+    -ms-transform-origin: 0 0; /* IE 9 */
+    -webkit-transform-origin: 0 0; /* Safari and Chrome */
+    -moz-transform-origin: 0 0; /* Firefox */
+    -o-transform-origin: 0 0; /* Opera */
+    transform-origin: 0 0;
+}
+
+.hexrow > div > div:last-of-type {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    overflow: hidden;
+    background-image: inherit;
+    
+    -ms-transform:rotate(-60deg); /* IE 9 */
+    -moz-transform:rotate(-60deg); /* Firefox */
+    -webkit-transform:rotate(-60deg); /* Safari and Chrome */
+    -o-transform:rotate(-60deg); /* Opera */
+    transform:rotate(-60deg);
+}
+
+.hexrow > div > div:last-of-type:before {
+    content: '';
+    position: absolute;
+    width: 200px; /* starting width + margin sizing */
+    height: 100%;
+    background-image: inherit;
+    background-position: 0 0;
+    background-repeat: no-repeat;
+    background-size: auto 120%;
+    bottom: 0;
+    left: 0;
+    z-index: 1;
+    
+    /*translate properties are initial width (100px) and half height (173.2 / 2 = 86.6) */
+    -ms-transform:rotate(60deg) translate(100px, 86.6px); /* IE 9 */
+    -moz-transform:rotate(60deg) translate(100px, 86.6px); /* Firefox */
+    -webkit-transform:rotate(60deg) translate(100px, 86.6px); /* Safari and Chrome */
+    -o-transform:rotate(60deg) translate(100px, 86.6px); /* Opera */
+    transform:rotate(60deg) translate(100px, 86.6px);
+    
+    -ms-transform-origin: 100% 0; /* IE 9 */
+    -webkit-transform-origin: 100% 0; /* Safari and Chrome */
+    -moz-transform-origin: 100% 0; /* Firefox */
+    -o-transform-origin: 100% 0; /* Opera */
+    transform-origin: 100% 0;
+}
+
+.hexrow > div > span {
+    display: inline-block;
+    margin: 0 -30px;
+    line-height: 1.1;
+    vertical-align: middle;
+    white-space: normal; 
+}
+
+.dummy-hex {
+    visibility: hidden;
+}
+
+@media all and (max-width: 450px) {
+    :root {
+        --hexWidth: 50px;
+    }
+}

@@ -1,0 +1,24 @@
+#name-form {
+    margin-top: 10px;
+    text-align: center;
+}
+
+#leaderboard{
+    margin: auto;
+    margin-top: 20px;
+    list-style: none;
+    width: 300px;
+    padding: 0;
+}
+
+.this-user{
+    color: rgb(9, 146, 9);
+}
+
+.leader-entry {
+    display: grid;
+    grid-template-columns: 40px 50px 210px;
+    font-size: 1.4em;
+    align-items: center;
+    text-align: left;
+}

@@ -1,5 +1,6 @@
 // server always sends key letter last
 const keyLetter = LETTERS[6];
+
 var currentWord = '';
 var points = 0;
 var foundWords = [];
@@ -55,8 +56,7 @@ async function postData(url = '', data = {}) {
       body: JSON.stringify(data) // body data type must match "Content-Type" header
     });
     return response.json(); // parses JSON response into native JavaScript objects
-  }
-  
+}
 
 function saveGame(){
     let midnight = new Date();
@@ -194,14 +194,22 @@ function shuffleTiles() {
     [tmp[keyIndex], tmp[tmp.length - 1]] = [tmp[tmp.length - 1], tmp[keyIndex]];
 
     // rebuild dom - removes events
-    document.querySelectorAll('#hexGrid')[0].outerHTML = document.querySelectorAll('#hexGrid')[0].outerHTML;
+    document.querySelector('.hexGridContainer').outerHTML = document.querySelector('.hexGridContainer').outerHTML;
 
-    document.querySelectorAll('.reg-letter').forEach((el, i) => {
-        el.innerHTML = '<h1 class="letter noselect">' + tmp[i] + '</h1>';
+    document.querySelectorAll('.reg-tile').forEach((el, i) => {
+        el.childNodes[0].textContent = tmp[i];
+        
         el.addEventListener('click', addLetter(tmp[i]), false);
+        el.childNodes.forEach((n, j) => {
+            n.addEventListener('click', addLetter(tmp[i]), false);
+        });
     });
 
-    document.querySelectorAll('.key-letter')[0].addEventListener('click', addLetter(keyLetter), false);
+    var keyTileEl = document.querySelector('#key-tile');
+    keyTileEl.addEventListener('click', addLetter(keyLetter), false);
+    keyTileEl.childNodes.forEach((el, i) => {
+        el.addEventListener('click', addLetter(keyLetter));
+    })
 }
 
 function shuffle(array) {
@@ -223,80 +231,85 @@ function shuffle(array) {
     return array;
 }
 
+const enterCurrentWord = () => {
+    if (currentWord.length < 4) {
+        flashMsg("too few letters 😬");
+        currentWord = "";
+        renderCurrentWord();
+        return;
+    }
 
-document.addEventListener('DOMContentLoaded', function (event) {
+    if (!currentWord.includes(keyLetter)) {
+        currentWord = "";
+        flashMsg('need middle letter 😬');
+        renderCurrentWord();
+        return;
+    }
+
+    if (foundWords.includes(currentWord)) {
+        flashMsg('already found that one 😬');
+        currentWord = "";
+        renderCurrentWord();
+        return;
+    }
+
+    if (checkWord(currentWord)) {
+        let score = scoreWord(currentWord);
+        points += score;
+        foundWords.push(currentWord);
+
+        if (pangramDetector(currentWord)) {
+            flashMsg(`🐝 bzzz...pangram!!! 😲 🐝 +${score}`);
+        } else {
+            flashMsg(`${successMessages[Math.floor(Math.random() * successMessages.length)]} +${score}`);
+        }
+
+        currentWord = "";
+        renderCurrentWord();
+        renderPoints();
+        renderFoundWords();
+        saveGame();
+        postData('/update');
+        if(foundWords.length === VALID_WORDS.length){
+            alert("great job! you found all the words!")
+        }
+    } else {
+        flashMsg('word not found 😬');
+        currentWord = "";
+        renderCurrentWord();
+    }
+}
+
+const deleteChar = () => {
+    if (currentWord.length > 0) {
+        currentWord = currentWord.slice(0, -1);
+        renderCurrentWord();
+    }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    
     loadGame();
-    document.querySelectorAll('.key-letter')[0].innerHTML = '<h1 class="letter noselect">' + keyLetter + '</h1>';
-
-    document.querySelectorAll('.key-letter')[0].addEventListener('click', (ev) => {
+    
+    document.querySelector('#key-tile').childNodes[0].textContent = keyLetter;
+    
+    document.querySelector('#key-tile').addEventListener('click', (ev) => {
         currentWord += keyLetter;
         renderCurrentWord();
     });
 
     renderPoints();
 
-    document.querySelectorAll('.reg-letter').forEach((el, i) => {
+    document.querySelectorAll('.reg-tile').forEach((el, i) => {
         if (LETTERS[i] !== keyLetter) {
-            el.innerHTML = '<h1 class="letter noselect">' + LETTERS[i] + '</h1>';
+            el.childNodes[0].textContent = LETTERS[i];
             el.addEventListener('click', addLetter(LETTERS[i]), false);
         }
     });
 
-    document.querySelector('#enter-btn').addEventListener('click', function (e) {
-        if (currentWord.length < 4) {
-            flashMsg("too few LETTERS 😬");
-            currentWord = "";
-            renderCurrentWord();
-            return;
-        }
+    document.querySelector('#enter-btn').addEventListener('click', enterCurrentWord);
 
-        if (!currentWord.includes(keyLetter)) {
-            currentWord = "";
-            flashMsg('need middle letter 😬');
-            renderCurrentWord();
-            return;
-        }
-
-        if (foundWords.includes(currentWord)) {
-            flashMsg('already found that one 😬 ');
-            currentWord = "";
-            renderCurrentWord();
-            return;
-        }
-
-        if (checkWord(currentWord)) {
-            let score = scoreWord(currentWord);
-            points += score;
-            foundWords.push(currentWord);
-
-            if (pangramDetector(currentWord)) {
-                flashMsg(`🐝 bzzz...pangram!!! 😲 🐝 +${score}`);
-            } else {
-                flashMsg(`${successMessages[Math.floor(Math.random() * successMessages.length)]} +${score}`);
-            }
-
-            currentWord = "";
-            renderCurrentWord();
-            renderPoints();
-            renderFoundWords();
-            saveGame();
-            postData('/update');
-            if(foundWords.length === VALID_WORDS.length){
-                alert("great job! you found all the words!")
-            }
-        } else {
-            flashMsg('word not found 😬');
-            currentWord = "";
-            renderCurrentWord();
-        }
-    });
-
-    document.querySelector('#del-btn').addEventListener('click', function (e) {
-        if (currentWord.length > 0) {
-            currentWord = currentWord.slice(0, -1);
-            renderCurrentWord();
-        }
-    });
+    document.querySelector('#del-btn').addEventListener('click', deleteChar);
 
     document.querySelector('#shuffle-btn').addEventListener('click', shuffleTiles);
 });
