@@ -1,78 +1,82 @@
 doctype html
-head
-  meta(charset='UTF-8')
-  meta(http-equiv='X-UA-Compatible' content='IE=edge')
-  meta(name='viewport' content='width=device-width, initial-scale=1.0')
-  title bumblewords
-  link(rel='stylesheet' href='style.css')
-  link(rel='stylesheet' href='hexGrid.css')
-  link(rel="icon" type='img/png' href="img/favicon.ico")
-body
-  h1 bumblewords
-  nav
-    a(href='/leaderboard') leaderboard
-    |  | 
-    a(href='https://github.com/rsuth/bumblewords') github
-  #scoreboard
-  #current-word
-  #message
-  .hexGridContainer.noselect
-    .hexrow
-      .reg-tile
-        span.tileLetter 1
-        <div></div>
-        <div></div>
-      | !{' '}
-      .reg-tile
-        span.tileLetter 2
-        <div></div>
-        <div></div>      
-      | !{' '} 
-      .reg-tile
-        span.tileLetter 3
-        <div></div>
-        <div></div>
-    .hexrow
-      .reg-tile
-        span.tileLetter 4
-        div
-        div
-      | !{' '} 
-      #key-tile
-        span.tileLetter 5
-        <div></div>
-        <div></div>
-      | !{' '} 
-      .reg-tile
-        span.tileLetter 6
-        <div></div>
-        <div></div> 
-    .hexrow
-      .dummy-hex
-        span.tileLetter 7
-        <div></div>
-        <div></div>
-      | !{' '} 
-      .reg-tile
-        span.tileLetter 8
-        <div></div>
-        <div></div>
-      | !{' '} 
-      .dummy-hex
-        span.tileLetter 9
-        <div></div>
-        <div></div>
-  #controls
-    button#del-btn DELETE
-    button#shuffle-btn &#x1F504;
-    button#enter-btn ENTER
-  ul#wordlist
-  script.
-    const LETTERS = JSON.parse('!{letters}');
-    const VALID_WORDS = JSON.parse('!{validWords}');
-    const PANGRAM_BONUS = #{pangramBonus};
-  script(src="script.js")  
+html
+  head
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title bumblewords
+    link(rel='stylesheet', href='style.css')
+    link(rel='stylesheet', href='hexGrid.css')
+    link(rel="icon" type='img/ico' href="img/favicon.ico")
+    link(rel="apple-touch-icon" type='img/png' href="img/apple-touch-icon.png")
+  body
+    h1(class='noselect') bumblewords
+    nav
+      a(href='/leaderboard') leaderboard
+      |  | 
+      a(href='/yesterday') yesterday's answers
+      |  | 
+      a(href='https://github.com/rsuth/bumblewords') github 
+    #scoreboard
+    #current-word
+    #message
+    .hexGridContainer.noselect
+      .hexrow
+        .reg-tile
+          span.tileLetter 1
+          <div></div>
+          <div></div>
+        | !{' '}
+        .reg-tile
+          span.tileLetter 2
+          <div></div>
+          <div></div>      
+        | !{' '} 
+        .reg-tile
+          span.tileLetter 3
+          <div></div>
+          <div></div>
+      .hexrow
+        .reg-tile
+          span.tileLetter 4
+          div
+          div
+        | !{' '} 
+        #key-tile
+          span.tileLetter 5
+          <div></div>
+          <div></div>
+        | !{' '} 
+        .reg-tile
+          span.tileLetter 6
+          <div></div>
+          <div></div> 
+      .hexrow
+        .dummy-hex
+          span.tileLetter 7
+          <div></div>
+          <div></div>
+        | !{' '} 
+        .reg-tile
+          span.tileLetter 8
+          <div></div>
+          <div></div>
+        | !{' '} 
+        .dummy-hex
+          span.tileLetter 9
+          <div></div>
+          <div></div>
+    #controls
+      button#del-btn DELETE
+      button#shuffle-btn &#x1F504;
+      button#enter-btn ENTER
+    ul#wordlist
+    script.
+      const LETTERS = JSON.parse('!{letters}');
+      const VALID_WORDS = JSON.parse('!{validWords}');
+      const PANGRAM_BONUS = #{pangramBonus};
+    script(src="script.js")  
 
 
 
-        
+          

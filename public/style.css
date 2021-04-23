@@ -66,6 +66,13 @@ h1 {
     padding: 0px;
 }
 
+#yesterday-wordlist {
+    list-style-type: none;
+    font-size: 1.2em;
+    font-weight: 600;
+    padding: 0px;
+}
+
 .noselect {
     -webkit-touch-callout: none; /* iOS Safari */
       -webkit-user-select: none; /* Safari */

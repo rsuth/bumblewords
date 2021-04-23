@@ -23,40 +23,38 @@ const successMessages = [
     '🐝 bee mine 🐝'
 ]
 
-function setCookie(name, value, exp, path = '/'){
-    const expires = exp.toUTCString()
-    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path
-}
+function setCookie(name, value, exp, path = '/') {
+    const expires = exp.toUTCString();
+    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+};
 
-function getCookie(name){
+function getCookie(name) {
     return document.cookie.split('; ').reduce((r, v) => {
-        const parts = v.split('=')
+        const parts = v.split('=');
         return parts[0] === name ? decodeURIComponent(parts[1]) : r
-    }, '')
-}
+    }, '');
+};
 
-function deleteCookie(name, path = '/'){
+function deleteCookie(name, path = '/') {
     setCookie(name, '', new Date(Date.now() + -1 * 864e5), path)
-}
+};
 
-// Example POST method implementation:
+
 async function postData(url = '', data = {}) {
-    // Default options are marked with *
     const response = await fetch(url, {
-      method: 'POST', // *GET, POST, PUT, DELETE, etc.
-      mode: 'cors', // no-cors, *cors, same-origin
-      cache: 'no-cache', // *default, no-cache, reload, force-cache, only-if-cached
-      credentials: 'same-origin', // include, *same-origin, omit
+      method: 'POST',
+      mode: 'cors',
+      cache: 'no-cache',
+      credentials: 'same-origin',
       headers: {
         'Content-Type': 'application/json'
-        // 'Content-Type': 'application/x-www-form-urlencoded',
       },
-      redirect: 'follow', // manual, *follow, error
-      referrerPolicy: 'no-referrer', // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
-      body: JSON.stringify(data) // body data type must match "Content-Type" header
+      redirect: 'follow',
+      referrerPolicy: 'no-referrer',
+      body: JSON.stringify(data)
     });
-    return response.json(); // parses JSON response into native JavaScript objects
-}
+    return response.json();
+};
 
 function saveGame(){
     let midnight = new Date();
@@ -69,7 +67,7 @@ function saveGame(){
     setCookie('score', points, midnight);
 }
 
-function loadGame(){
+function loadGame() {
     var words = getCookie('words');
     var score = getCookie('score');
     
@@ -176,7 +174,7 @@ function flashMsg(msg) {
     msgEl.className = "show";
 
     // After 3 seconds, remove the show class from DIV
-    setTimeout(function () { msgEl.className = msgEl.className.replace("show", ""); }, 1200);
+    setTimeout(() => { msgEl.className = msgEl.className.replace = ("show", ""); }, 1200);
 }
 
 function addLetter(l) {
@@ -224,7 +222,7 @@ function shuffle(array) {
     return array;
 }
 
-const enterCurrentWord = () => {
+function enterCurrentWord() {
     if (currentWord.length < 4) {
         flashMsg("too few letters 😬");
         currentWord = "";
@@ -273,7 +271,7 @@ const enterCurrentWord = () => {
     }
 }
 
-const deleteChar = () => {
+function deleteChar() {
     if (currentWord.length > 0) {
         currentWord = currentWord.slice(0, -1);
         renderCurrentWord();

@@ -1,4 +1,4 @@
-import {readFileSync} from 'fs';
+import { readFileSync } from 'fs';
 
 const shuffle = (array) => {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -32,6 +32,7 @@ const letterGetter = () => {
 };
 
 export const getValidWords = (letters, dictionary) => {
+
     let re = new RegExp(`^[${letters.join('')}]+$`)
 
     let valid_words = dictionary.filter((word) => {
@@ -39,6 +40,7 @@ export const getValidWords = (letters, dictionary) => {
     });
 
     return valid_words;
+
 };
 
 export const cookieMiddleware = (req, res, next) => {
@@ -106,11 +108,11 @@ const pangramDetector = (letters, word) => {
 // and at least one pangram.
 export const getLetterSet = (dictionary, minimumWords) => {
     let done = false;
-
+    var letters = [];
     while (!done) {
-        let letters = letterGetter();
+        letters = letterGetter();
+        
         let validWords = getValidWords(letters, dictionary);
-
         let pangram = false;
 
         validWords.forEach((w, i) => {
@@ -121,9 +123,15 @@ export const getLetterSet = (dictionary, minimumWords) => {
 
         if (validWords.length > minimumWords && pangram) {
             done = true;
-            return letters;
         }
+        
+
+        if(['I','N','G'].every(l => letters.includes(l))){
+            done = false;
+        }
+
     }
+    return letters;
 };
 
 export const updateLeaderboard = (name, score, leaderboard) => {

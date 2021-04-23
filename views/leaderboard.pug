@@ -1,15 +1,25 @@
 doctype html
 html 
   head 
-    title bumblewords 
+    meta(charset='UTF-8')
+    meta(http-equiv='X-UA-Compatible' content='IE=edge')
+    meta(name='viewport' content='width=device-width, initial-scale=1.0')
+    title bumblewords
     link(rel='stylesheet', href='style.css')
     link(rel='stylesheet', href='leaderboard.css')
-    meta(name="viewport" content="width=device-width, initial-scale=1")
-  body 
+    link(rel="icon" type='img/ico' href="img/favicon.ico")
+    link(rel="apple-touch-icon" type='img/png' href="img/apple-touch-icon.png")
+  body
     h1(class='noselect') bumblewords
-    nav 
-        a(href='/') back
+    nav
+      a(href='/') back to game
+      |  | 
+      a(href='/yesterday') yesterday's answers  
+    
+    if (yesterdaysWinner.nickname !== "")
+      div(style='margin-top: 5px;') Yesterdays winner was #{yesterdaysWinner.nickname} with #{yesterdaysWinner.score} points.
     - var nickname = leaderboard.find(doc => doc.userId === userId) ? leaderboard.find(doc => doc.userId === userId).nickname : 'anonymous user'
+    
     if showNickForm
       form(id="name-form" action="/leaderboard", method="post")
           label(for="username") your nickname:  
