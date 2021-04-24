@@ -112,9 +112,13 @@ var job = new CronJob('0 0 * * *', () => {
     // find yesterdaysAnswers:
     puzzleDB.findOne({ date: { $gte: yesterday, $lt: today } }, (err, doc) => {
         if (doc) {
+            yesterdaysPuzzle = doc.letters;
             yesterdaysAnswers = getValidWords(doc.letters, dictionary);
+            console.log(`found yesterdays puzzle: ${doc.letters} (${yesterdaysAnswers.length} words)`)
         } else {
+            yesterdaysPuzzle = [];
             yesterdaysAnswers = [];
+            console.log('could not find yesterdays puzzle');
         }
     });
 }, null, true, 'America/Los_Angeles');
