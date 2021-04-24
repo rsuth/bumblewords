@@ -153,6 +153,7 @@ app.post('/update', (req, res) => {
         midnight.setHours(23, 59, 59, 0);
         let userId = createNewUser(leaderboardDB, words, score);
         res.cookie('userId', userId, { expires: midnight, sameSite: 'lax' });
+        res.send({ score: score });
     } else {
         leaderboardDB.update({ userId: req.cookies.userId }, { $set: { words: words, score: score } }, {}, () => {
             res.send({ score: score });
