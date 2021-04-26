@@ -15,9 +15,28 @@ h1 {
 }
 
 #scoreboard {
-    font-size: 1em;
     height: 1.1em;
-    margin-top: 5px;
+    width: 320px;
+    margin: auto;
+    margin-top: 8px;
+    position: relative;
+    text-align: left;
+    border: 2px solid black;
+}
+
+#scoreboard:before {
+    content: attr(data-label);
+    font-size: 1em;
+    position: absolute;
+    text-align: center;
+    left: 0;
+    right: 0;
+}
+
+#scoreboard .value {
+    background-color: #fcd703;
+    display: inline-block;
+    height: 100%;
 }
 
 #current-word {
@@ -32,6 +51,7 @@ h1 {
     font-size: 1.2em;
     height: 1.3em;
     margin-bottom: 10px;
+    margin-top: -1.5em;
 }
 
 #key-tile {
@@ -84,11 +104,11 @@ h1 {
 }
 
 #message.show {
-    visibility: visible; /* Show the snackbar */
-    /* Add animation: Take 0.5 seconds to fade in and out the snackbar.
-    However, delay the fade out process for 2.5 seconds */
-    -webkit-animation: fadein 0.2s, fadeout 0.2s 1s;
-    animation: fadein 0.2s, fadeout 0.2s 1s;
+    visibility: visible; /* Show the message */
+    /* Add animation: Take 0.2 seconds to fade in and out the message.
+    However, delay the fade out process for 1 seconds */
+    -webkit-animation: fadein 0.2s, fadeout 0.2s .7s;
+    animation: fadein 0.2s, fadeout 0.2s .7s;
   }
   
 /* Animations to fade the snackbar in and out */

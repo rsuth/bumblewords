@@ -141,8 +141,10 @@ function renderCurrentWord() {
 }
 
 function renderPoints() {
-    document.querySelector('#scoreboard').textContent = points + 'pts (' + foundWords.length
-        + '/' + VALID_WORDS.length + ' words found)';
+    let progressPercent = Math.ceil(points / maxScore * 100);
+    let sbEl = document.querySelector('#scoreboard');
+    sbEl.innerHTML = `<span class='value' style='width: ${progressPercent}%;'></span>`;
+    sbEl.setAttribute('data-label', `${points + 'pts (' + foundWords.length + '/' + VALID_WORDS.length + ' words found)'}`);
 }
 
 function renderFoundWords() {
