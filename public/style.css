@@ -107,8 +107,8 @@ h1 {
     visibility: visible; /* Show the message */
     /* Add animation: Take 0.2 seconds to fade in and out the message.
     However, delay the fade out process for 1 seconds */
-    -webkit-animation: fadein 0.2s, fadeout 0.2s .7s;
-    animation: fadein 0.2s, fadeout 0.2s .7s;
+    -webkit-animation: fadein 0.2s, fadeout 0.2s 1s;
+    animation: fadein 0.2s, fadeout 0.2s 1s;
   }
   
 /* Animations to fade the snackbar in and out */
