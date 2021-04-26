@@ -19,6 +19,7 @@ h1 {
     width: 320px;
     margin: auto;
     margin-top: 8px;
+    margin-bottom: 8px;
     position: relative;
     text-align: left;
     border: 2px solid black;
@@ -135,7 +136,7 @@ h1 {
 
 @media all and (max-width: 450px) {
     .hexGridContainer {
-        padding-top: 24px;
+        padding-top: 34px;
     }
     h1 {
         margin-top: 8px;
@@ -146,8 +147,8 @@ h1 {
     }
     #current-word {
         font-size: 1.3em;
-        height: 1.4em;
-        line-height: 1.4em;
+        height: 1.5em;
+        line-height: 1.5em;
     }
     #message {
         font-size: 1em;
