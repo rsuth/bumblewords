@@ -40,6 +40,8 @@ h1 {
     position: relative;
     text-align: left;
     border: 2px solid black;
+    background-color: #e0e0e0;
+    color: black;
 }
 
 #scoreboard:before {
@@ -96,6 +98,7 @@ h1 {
     margin-left: 5px;
     margin-right: 5px;
     border-radius: 10px;
+    background-color: #e0e0e0;
 }
 
 #wordlist {
@@ -173,5 +176,8 @@ h1 {
         line-height: 1em;
         height: 1em;
         margin-bottom: 5px;
+    }
+    nav a {
+        font-size: 0.88em;
     }
 }

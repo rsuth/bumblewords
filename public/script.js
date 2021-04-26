@@ -298,8 +298,10 @@ function toggleDarkMode(){
 
     if(darkMode){
         document.body.classList.add('darkMode');
+        document.querySelector('#darkmode-toggle').textContent = 'light mode';
     }else {
         document.body.classList.remove('darkMode');
+        document.querySelector('#darkmode-toggle').textContent = 'dark mode';
     } 
 }
 
@@ -309,7 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if(darkMode !== 0){
         document.body.classList.add('darkMode');
-        console.log(darkMode);
+        document.querySelector('#darkmode-toggle').textContent = 'light mode';
     }
     
     document.querySelector('#key-tile').childNodes[0].textContent = keyLetter;
