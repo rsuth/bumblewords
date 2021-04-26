@@ -58,14 +58,15 @@ puzzleDB.findOne({ date: { $gte: today } }, (err, doc) => {
 
 // look for yesterdays winner in leaderboardDB
 leaderboardDB.find({ date: { $gt: yesterday, $lt: today } })
-    .sort({ score: -1 }).exec((err, docs) => {
-        if (docs[0]) {
-            yesterdaysWinner = { nickname: docs[0].nickname, score: docs[0].score };
-        } else {
-            yesterdaysWinner = { nickname: "", score: 0 };
-        }
-        console.log(`found yesterdays winner: ${yesterdaysWinner.nickname}`);
-    });
+        .sort({ score: -1, date: -1 }).exec((err, docs) => {
+            if (docs[0] != undefined) {
+                yesterdaysWinner = { nickname: docs[0].nickname, score: docs[0].score };
+                console.log(`found yesterdays winner: ${yesterdaysWinner.nickname}`);
+            } else {
+                yesterdaysWinner = { nickname: "", score: 0 };
+                console.log(`found no winner for yesterday.`);
+            }
+        });
 
 // find yesterdays puzzle and Answers:
 puzzleDB.findOne({ date: { $gte: yesterday, $lt: today } }, (err, doc) => {
@@ -100,13 +101,14 @@ var job = new CronJob('0 0 * * *', () => {
     
     // find yesterdaysWinner:
     leaderboardDB.find({ date: { $gt: yesterday, $lt: today } })
-        .sort({ score: -1 }).exec((err, docs) => {
-            if (docs) {
+        .sort({ score: -1, date: -1 }).exec((err, docs) => {
+            if (docs[0] != undefined) {
                 yesterdaysWinner = { nickname: docs[0].nickname, score: docs[0].score };
+                console.log(`found yesterdays winner: ${yesterdaysWinner.nickname}`);
             } else {
                 yesterdaysWinner = { nickname: "", score: 0 };
+                console.log(`found no winner for yesterday.`);
             }
-            console.log(`found yesterdays winner: ${yesterdaysWinner.nickname}`);
         });
     
     // find yesterdaysAnswers:
@@ -145,6 +147,7 @@ function createNewUser(leaderboardDB, words, score) {
         words: words,
         score: score
     });
+    console.log('creating user: ' + userId)
     return userId
 }
 
@@ -167,7 +170,7 @@ app.post('/update', (req, res) => {
 
 app.get('/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
-    leaderboardDB.find({ date: { $gt: today } }).sort({ score: -1 }).exec((err, docs) => {
+    leaderboardDB.find({ date: { $gt: today } }).sort({ score: -1, date: -1 }).exec((err, docs) => {
         res.render('leaderboard', {
             yesterdaysWinner: yesterdaysWinner,
             userId: thisUsersId,
@@ -182,7 +185,7 @@ app.post('/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
 
     leaderboardDB.update({ userId: req.cookies.userId }, { $set: { nickname: nick } }, {}, () => {
-        leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1 }).exec((err, docs) => {
+        leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: -1 }).exec((err, docs) => {
             res.render('leaderboard', {
                 yesterdaysWinner: yesterdaysWinner,
                 userId: thisUsersId,
