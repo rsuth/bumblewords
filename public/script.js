@@ -4,6 +4,7 @@ const keyLetter = LETTERS[6];
 var currentWord = '';
 var points = 0;
 var foundWords = [];
+var darkMode = 0;
 
 var maxWords = VALID_WORDS.length;
 var maxScore = VALID_WORDS.reduce((acc, word) => {
@@ -65,11 +66,15 @@ function saveGame(){
     
     setCookie('words', JSON.stringify(foundWords), midnight);
     setCookie('score', points, midnight);
+    setCookie('darkMode', darkMode, midnight);
 }
 
 function loadGame() {
     var words = getCookie('words');
     var score = getCookie('score');
+    var dark = getCookie('darkMode');
+    let midnight = new Date();
+    midnight.setHours(23,59,59,0);
     
     if(words && score){ // the cookies exist
         let savedWords = JSON.parse(words);
@@ -88,11 +93,15 @@ function loadGame() {
             deleteCookie('score');
         }
     } else {
-        let midnight = new Date();
-        midnight.setHours(23,59,59,0);
         // set empty cookies
         setCookie('words', JSON.stringify(foundWords), midnight);
         setCookie('score', points, midnight);
+    }
+    if(dark){
+        darkMode = parseInt(dark);
+    } else {
+        darkMode = 0;
+        setCookie('darkMode', darkMode, midnight);
     }
 }
 
@@ -280,9 +289,28 @@ function deleteChar() {
     }
 }
 
+function toggleDarkMode(){
+    let midnight = new Date();
+    midnight.setHours(23,59,59,0);
+    
+    darkMode ^= true;
+    setCookie('darkMode', darkMode, midnight);
+
+    if(darkMode){
+        document.body.classList.add('darkMode');
+    }else {
+        document.body.classList.remove('darkMode');
+    } 
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     
     loadGame();
+
+    if(darkMode !== 0){
+        document.body.classList.add('darkMode');
+        console.log(darkMode);
+    }
     
     document.querySelector('#key-tile').childNodes[0].textContent = keyLetter;
     
@@ -305,5 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelector('#del-btn').addEventListener('click', deleteChar);
 
     document.querySelector('#shuffle-btn').addEventListener('click', shuffleTiles);
+
+    document.querySelector('#darkmode-toggle').addEventListener('click', toggleDarkMode);
 });
 

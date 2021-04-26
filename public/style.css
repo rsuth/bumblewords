@@ -9,6 +9,23 @@ body {
     text-align: center;
 }
 
+body.darkMode {
+    background-color: #0d1117;
+    color: #c9d1d9;
+}
+
+body.darkMode a {
+    color: #809fff;
+}
+
+body.darkMode a:visited {
+    color: #809fff;
+}
+
+a:visited{
+    color: blue;
+}
+
 h1 {
     font-size: 3em;
     margin-bottom: 2px;
@@ -62,6 +79,7 @@ h1 {
 .tileLetter {
     font-size: 1.5em;
     font-weight: 725;
+    color: black;
 }
 
 .hexGridContainer {
