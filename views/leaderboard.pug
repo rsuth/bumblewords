@@ -14,8 +14,10 @@ html
     nav
       a(href='/') back to game
       |  | 
-      a(href='/yesterday') yesterday's answers  
-    
+      a(href='/yesterday') yesterday's answers
+      |  | 
+      a(id="darkmode-toggle" href="javascript:;") dark mode
+  
     if (yesterdaysWinner.nickname !== "")
       div(style='margin-top: 5px;') Yesterdays winner was #{yesterdaysWinner.nickname} with #{yesterdaysWinner.score} points.
     - var nickname = leaderboard.find(doc => doc.userId === userId) ? leaderboard.find(doc => doc.userId === userId).nickname : 'anonymous user'
@@ -33,3 +35,4 @@ html
                 span(class="crown")= crown
                 span(class="userscore")= entry.score
                 span(class="username")= entry.nickname
+    script(src="leaderboard.js")

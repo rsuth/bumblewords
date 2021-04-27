@@ -29,4 +29,18 @@ function renderFoundWords() {
     })
 }
 
+function getCookie(name) {
+    return document.cookie.split('; ').reduce((r, v) => {
+        const parts = v.split('=');
+        return parts[0] === name ? decodeURIComponent(parts[1]) : r
+    }, '');
+};
+
+var darkMode = getCookie('darkMode') ? parseInt(getCookie('darkMode')) : 0;
 renderFoundWords();
+
+document.addEventListener("DOMContentLoaded", () => {
+    if(darkMode !== 0){
+        document.body.classList.add('darkMode');
+    }
+})

@@ -72,7 +72,7 @@ function saveGame(){
 function loadGame() {
     var words = getCookie('words');
     var score = getCookie('score');
-    var dark = getCookie('darkMode');
+
     let midnight = new Date();
     midnight.setHours(23,59,59,0);
     
@@ -97,12 +97,9 @@ function loadGame() {
         setCookie('words', JSON.stringify(foundWords), midnight);
         setCookie('score', points, midnight);
     }
-    if(dark){
-        darkMode = parseInt(dark);
-    } else {
-        darkMode = 0;
-        setCookie('darkMode', darkMode, midnight);
-    }
+    
+    darkMode = getCookie('darkMode') ? parseInt(getCookie('darkMode')) : 0;
+
 }
 
 function scoreWord(word) {
