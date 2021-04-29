@@ -73,7 +73,7 @@ const getYesterdaysWinner = (leaderboardDB) => {
 
     // find yesterdaysWinner:
     return new Promise((resolve, reject) => {
-        leaderboardDB.find({ date: { $gt: yesterday, $lt: today } }, (err, docs) => {
+        leaderboardDB.find({ date: { $gt: yesterday, $lt: today } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
             if (err) {
                 reject(err);
             }
