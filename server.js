@@ -13,7 +13,7 @@ const MIN_VALID_WORDS = 20;
 const PANGRAM_BONUS = 7;
 const dictionary = loadDictionary('dictionary.txt');
 
-app.use(express.static('public'));
+// app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(loggerMiddleware);
@@ -21,76 +21,38 @@ app.set('view engine', 'pug');
 app.set('views', path.join(path.resolve(), 'views'))
 
 console.log(`Starting server...`);
-
-var today = new Date();
-var yesterday = new Date(today);
-yesterday.setDate(yesterday.getDate() - 1);
-yesterday.setHours(0, 0, 0, 0);
-today.setHours(0, 0, 0, 0);
-
-console.log(`todays date: ${today}, yesterdays date: ${yesterday}`);
-
 console.log(`creating database interfaces...`);
-var leaderboardDB = new nedb({ filename: path.join(path.resolve(), 'leaderboard.db'), autoload: true });
-leaderboardDB.ensureIndex({ fieldName: 'userId', unique: true }, function (err) {
-    if (err) { console.error(`nedb error ensureIndex: ${err}`); };
-});
-var puzzleDB = new nedb({ filename: path.join(path.resolve(), 'puzzle.db'), autoload: true });
 
-var letters;
-var yesterdaysWinner;
-var yesterdaysAnswers;
-var yesterdaysPuzzle;
-var validWords;
-
-// look for a puzzle with todays date in puzzleDB.
-puzzleDB.findOne({ date: { $gte: today } }, (err, doc) => {
-    if (doc) {
-        console.log(`Found puzzle created today: ${doc.letters}`);
-        letters = doc.letters;
-    } else {
-        letters = getLetterSet(dictionary, MIN_VALID_WORDS);
-        console.log(`New puzzle created: ${letters}`);
-        puzzleDB.insert({ date: new Date(), letters: letters });
-    }
-    validWords = getValidWords(letters, dictionary);
+var leaderboardDB = new nedb({
+    filename: path.join(path.resolve(), 'leaderboard.db'),
+    autoload: true
 });
 
-// look for yesterdays winner in leaderboardDB
-leaderboardDB.find({ date: { $gt: yesterday, $lt: today } })
-        .sort({ score: -1, date: -1 }).exec((err, docs) => {
-            if (docs[0] != undefined) {
-                yesterdaysWinner = { nickname: docs[0].nickname, score: docs[0].score };
-                console.log(`found yesterdays winner: ${yesterdaysWinner.nickname}`);
-            } else {
-                yesterdaysWinner = { nickname: "", score: 0 };
-                console.log(`found no winner for yesterday.`);
-            }
-        });
+leaderboardDB.ensureIndex({ fieldName: 'userId', unique: true });
 
-// find yesterdays puzzle and Answers:
-puzzleDB.findOne({ date: { $gte: yesterday, $lt: today } }, (err, doc) => {
-    if (doc) {
-        yesterdaysPuzzle = doc.letters;
-        yesterdaysAnswers = getValidWords(doc.letters, dictionary);
-        console.log(`found yesterdays puzzle: ${doc.letters} (${yesterdaysAnswers.length} words)`)
-    } else {
-        yesterdaysPuzzle = [];
-        yesterdaysAnswers = [];
-        console.log('could not find yesterdays puzzle');
-    }
+var puzzleDB = new nedb({
+    filename: path.join(path.resolve(), 'puzzle.db'),
+    autoload: true
 });
 
-var job = new CronJob('0 0 * * *', () => {
+var puzzle = {
+    letters: [],
+    validWords: []
+};
+
+var yesterday = {
+    winner: {},
+    answers: [],
+    letters: []
+};
+
+const createNewPuzzle = (puzzleDB, dictionary) => {
     console.log(`Creating new puzzle...`);
     // reset today and yesterday
     today = new Date();
-    yesterday = new Date(today);
-    yesterday.setDate(yesterday.getDate() - 1);
-    yesterday.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
 
-    console.log(`todays date: ${today}, yesterdays date: ${yesterday}`);
+    console.log(`todays date: ${today}`);
 
     letters = getLetterSet(dictionary, MIN_VALID_WORDS);
     validWords = getValidWords(letters, dictionary);
@@ -98,45 +60,60 @@ var job = new CronJob('0 0 * * *', () => {
     console.log(`New puzzle created: ${letters}`);
 
     puzzleDB.insert({ date: today, letters: letters });
-    
+
+    return { letters, validWords }
+}
+
+const getYesterdaysWinner = (leaderboardDB) => {
+    let today = new Date();
+    let yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
     // find yesterdaysWinner:
-    leaderboardDB.find({ date: { $gt: yesterday, $lt: today } })
-        .sort({ score: -1, date: -1 }).exec((err, docs) => {
+    return new Promise((resolve, reject) => {
+        leaderboardDB.find({ date: { $gt: yesterday, $lt: today } }, (err, docs) => {
+            if (err) {
+                reject(err);
+            }
             if (docs[0] != undefined) {
-                yesterdaysWinner = { nickname: docs[0].nickname, score: docs[0].score };
-                console.log(`found yesterdays winner: ${yesterdaysWinner.nickname}`);
+                console.log(`found yesterdays winner: ${docs[0].nickname}`);
+                resolve({ nickname: docs[0].nickname, score: docs[0].score });
             } else {
-                yesterdaysWinner = { nickname: "", score: 0 };
                 console.log(`found no winner for yesterday.`);
+                resolve({ nickname: "", score: 0 });
             }
         });
-    
-    // find yesterdaysAnswers:
-    puzzleDB.findOne({ date: { $gte: yesterday, $lt: today } }, (err, doc) => {
-        if (doc) {
-            yesterdaysPuzzle = doc.letters;
-            yesterdaysAnswers = getValidWords(doc.letters, dictionary);
-            console.log(`found yesterdays puzzle: ${doc.letters} (${yesterdaysAnswers.length} words)`)
-        } else {
-            yesterdaysPuzzle = [];
-            yesterdaysAnswers = [];
-            console.log('could not find yesterdays puzzle');
-        }
     });
-}, null, true, 'America/Los_Angeles');
+};
 
-job.start();
+const getYesterdaysAnswers = (puzzleDB) => {
+    let today = new Date();
+    let yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
 
-
-// routes=====================================//
-
-app.get('/', (req, res) => {
-    res.render('index', {
-        letters: JSON.stringify(letters),
-        validWords: JSON.stringify(validWords),
-        pangramBonus: PANGRAM_BONUS
-    })
-});
+    // find yesterdaysAnswers:
+    return new Promise((resolve, reject) => {
+        puzzleDB.findOne({ date: { $gte: yesterday, $lt: today } }, (err, doc) => {
+            if (err) {
+                reject(err);
+            }
+            let answers = [];
+            let letters = [];
+            if (doc) {
+                answers = getValidWords(doc.letters, dictionary);
+                letters = doc.letters;
+                console.log(`found yesterdays puzzle: ${letters} (${answers.length} words)`);
+            } else {
+                console.log('could not find yesterdays puzzle');
+            }
+            resolve({ answers: answers, letters: letters });
+        });
+    });
+}
 
 function createNewUser(leaderboardDB, words, score) {
     let userId = uuidv4().slice(0, 8);
@@ -151,9 +128,76 @@ function createNewUser(leaderboardDB, words, score) {
     return userId
 }
 
+// look for a puzzle with todays date in puzzleDB.
+let today = new Date();
+today.setHours(0, 0, 0, 0);
+puzzleDB.findOne({ date: { $gte: today } }, (err, doc) => {
+    if (doc) {
+        console.log(`Found puzzle created today: ${doc.letters}`);
+        puzzle.letters = doc.letters;
+        puzzle.validWords = getValidWords(doc.letters, dictionary);
+    } else {
+        puzzle = createNewPuzzle(puzzleDB, dictionary);
+    }
+});
+
+// get winner from yesterday
+getYesterdaysWinner(leaderboardDB)
+    .then(res => {
+        yesterday.winner = res;
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+// get answers and letters from yesterday   
+getYesterdaysAnswers(puzzleDB)
+    .then(res => {
+        yesterday.answers = res.answers;
+        yesterday.letters = res.letters;
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+// set up cron job to run at midnight to make new puzzle
+var job = new CronJob('0 0 * * *', () => {
+    puzzle = createNewPuzzle(puzzleDB, dictionary);
+    // get winner from yesterday
+    getYesterdaysWinner(leaderboardDB)
+        .then(res => {
+            yesterday.winner = res;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+
+    // get answers and letters from yesterday   
+    getYesterdaysAnswers(puzzleDB)
+        .then(res => {
+            yesterday.answers = res.answers;
+            yesterday.letters = res.letters;
+        })
+        .catch(err => {
+            console.log(err);
+        });
+}, null, true, 'America/Los_Angeles');
+job.start();
+
+
+// routes=====================================//
+
+app.get('/', (req, res) => {
+    res.render('index', {
+        letters: JSON.stringify(puzzle.letters),
+        validWords: JSON.stringify(puzzle.validWords),
+        pangramBonus: PANGRAM_BONUS
+    })
+});
+
 app.post('/update', (req, res) => {
     let words = req.cookies.words ? JSON.parse(req.cookies.words) : [];
-    let score = scoreWords(letters, words, validWords);
+    let score = scoreWords(puzzle.letters, words, puzzle.validWords);
 
     if (!req.cookies.userId) {
         let midnight = new Date();
@@ -162,7 +206,7 @@ app.post('/update', (req, res) => {
         res.cookie('userId', userId, { expires: midnight, sameSite: 'lax' });
         res.send({ score: score });
     } else {
-        leaderboardDB.update({ userId: req.cookies.userId }, { $set: { words: words, score: score } }, {}, () => {
+        leaderboardDB.update({ userId: req.cookies.userId }, { $set: { date: new Date(), words: words, score: score } }, {}, () => {
             res.send({ score: score });
         });
     }
@@ -170,9 +214,9 @@ app.post('/update', (req, res) => {
 
 app.get('/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
-    leaderboardDB.find({ date: { $gt: today } }).sort({ score: -1, date: -1 }).exec((err, docs) => {
+    leaderboardDB.find({ date: { $gt: today } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
         res.render('leaderboard', {
-            yesterdaysWinner: yesterdaysWinner,
+            yesterdaysWinner: yesterday.winner,
             userId: thisUsersId,
             leaderboard: docs,
             showNickForm: (thisUsersId.length > 0)
@@ -185,9 +229,9 @@ app.post('/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
 
     leaderboardDB.update({ userId: req.cookies.userId }, { $set: { nickname: nick } }, {}, () => {
-        leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: -1 }).exec((err, docs) => {
+        leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
             res.render('leaderboard', {
-                yesterdaysWinner: yesterdaysWinner,
+                yesterdaysWinner: yesterday.winner,
                 userId: thisUsersId,
                 leaderboard: docs,
                 showNickForm: (thisUsersId.length > 0)
@@ -199,8 +243,8 @@ app.post('/leaderboard', (req, res) => {
 
 app.get('/yesterday', (req, res) => {
     res.render('yesterday', {
-        words: JSON.stringify(yesterdaysAnswers),
-        letters: JSON.stringify(yesterdaysPuzzle)
+        words: JSON.stringify(yesterday.answers),
+        letters: JSON.stringify(yesterday.letters)
     });
 });
 
