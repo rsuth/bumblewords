@@ -54,8 +54,8 @@ const createNewPuzzle = (puzzleDB, dictionary) => {
 
     console.log(`todays date: ${today}`);
 
-    letters = getLetterSet(dictionary, MIN_VALID_WORDS);
-    validWords = getValidWords(letters, dictionary);
+    let letters = getLetterSet(dictionary, MIN_VALID_WORDS);
+    let validWords = getValidWords(letters, dictionary);
 
     console.log(`New puzzle created: ${letters}`);
 
@@ -214,7 +214,7 @@ app.post('/update', (req, res) => {
 
 app.get('/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
-    leaderboardDB.find({ date: { $gt: today } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
+    leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
         res.render('leaderboard', {
             yesterdaysWinner: yesterday.winner,
             userId: thisUsersId,
@@ -226,17 +226,8 @@ app.get('/leaderboard', (req, res) => {
 
 app.post('/leaderboard', (req, res) => {
     let nick = req.body.username.replace(/[\/\\#,+()~%.'":*?<>{}]/g, '').slice(0, 25);
-    let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
-
     leaderboardDB.update({ userId: req.cookies.userId }, { $set: { nickname: nick } }, {}, () => {
-        leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
-            res.render('leaderboard', {
-                yesterdaysWinner: yesterday.winner,
-                userId: thisUsersId,
-                leaderboard: docs,
-                showNickForm: (thisUsersId.length > 0)
-            })
-        })
+        res.redirect('/leaderboard');
     });
 
 });
