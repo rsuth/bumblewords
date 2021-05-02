@@ -24,9 +24,12 @@ export const loadDictionary = (dictFile) => {
     return tmp.split('\n');
 }
 
-const letterGetter = () => {
+const letterGetter = (banned) => {
     let consonants = ['B', 'C', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'M', 'N', 'P', 'R', 'S', 'T', 'V', 'W', 'X', 'Y', 'Z'];
-    let vowels = ['A', 'E', 'I', 'O'];
+    let vowels = ['A', 'E', 'I', 'O', 'U'];
+
+    consonants = consonants.filter(letter => !banned.includes(letter));
+    vowels = vowels.filter(letter => !banned.includes(letter));
 
     return shuffle(shuffle(consonants).slice(0, 5).concat(shuffle(vowels).slice(0, 2)));
 };
@@ -105,12 +108,12 @@ const pangramDetector = (letters, word) => {
 
 // function to get a good letter set.
 // Good means there are at least <minimumWords> valid words
-// and at least one pangram.
-export const getLetterSet = (dictionary, minimumWords) => {
+// and at least one pangram and banned letters arent included.
+export const getLetterSet = (dictionary, minimumWords, banned) => {
     let done = false;
     var letters = [];
     while (!done) {
-        letters = letterGetter();
+        letters = letterGetter(banned);
         
         let validWords = getValidWords(letters, dictionary);
         let pangram = false;

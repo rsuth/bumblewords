@@ -12,8 +12,9 @@ const PORT = 3000;
 const MIN_VALID_WORDS = 20;
 const PANGRAM_BONUS = 7;
 const dictionary = loadDictionary('dictionary.txt');
+const BANNED_LETTERS = ['K', 'E', 'S']
 
-// app.use(express.static('public'));
+//app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(loggerMiddleware);
@@ -54,7 +55,7 @@ const createNewPuzzle = (puzzleDB, dictionary) => {
 
     console.log(`todays date: ${today}`);
 
-    let letters = getLetterSet(dictionary, MIN_VALID_WORDS);
+    let letters = getLetterSet(dictionary, MIN_VALID_WORDS, BANNED_LETTERS);
     let validWords = getValidWords(letters, dictionary);
 
     console.log(`New puzzle created: ${letters}`);
