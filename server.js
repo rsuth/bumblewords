@@ -188,7 +188,7 @@ job.start();
 
 // routes=====================================//
 
-app.get('/', (req, res) => {
+app.get('/bumblewords', (req, res) => {
     res.render('index', {
         letters: JSON.stringify(puzzle.letters),
         validWords: JSON.stringify(puzzle.validWords),
@@ -196,7 +196,7 @@ app.get('/', (req, res) => {
     })
 });
 
-app.post('/update', (req, res) => {
+app.post('/bumblewords/update', (req, res) => {
     let words = req.cookies.words ? JSON.parse(req.cookies.words) : [];
     let score = scoreWords(puzzle.letters, words, puzzle.validWords);
 
@@ -213,7 +213,7 @@ app.post('/update', (req, res) => {
     }
 });
 
-app.get('/leaderboard', (req, res) => {
+app.get('/bumblewords/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
     leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
         res.render('leaderboard', {
@@ -225,15 +225,15 @@ app.get('/leaderboard', (req, res) => {
     })
 });
 
-app.post('/leaderboard', (req, res) => {
+app.post('/bumblewords/leaderboard', (req, res) => {
     let nick = req.body.username.replace(/[\/\\#,+()~%.'":*?<>{}]/g, '').slice(0, 25);
     leaderboardDB.update({ userId: req.cookies.userId }, { $set: { nickname: nick } }, {}, () => {
-        res.redirect('/leaderboard');
+        res.redirect('/bumblewords/leaderboard');
     });
 
 });
 
-app.get('/yesterday', (req, res) => {
+app.get('/bumblewords/yesterday', (req, res) => {
     res.render('yesterday', {
         words: JSON.stringify(yesterday.answers),
         letters: JSON.stringify(yesterday.letters)

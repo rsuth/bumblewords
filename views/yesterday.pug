@@ -5,16 +5,16 @@ html
     meta(http-equiv='X-UA-Compatible' content='IE=edge')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     title bumblewords
-    link(rel='stylesheet', href='bumblewords.css')
-    link(rel="icon" type='img/ico' href="img/favicon.ico")
-    link(rel="apple-touch-icon" type='img/png' href="img/apple-touch-icon.png")
+    link(rel='stylesheet', href='/bumblewords/public/bumblewords.css')
+    link(rel="icon" type='img/ico' href="/bumblewords/public/img/favicon.ico")
+    link(rel="apple-touch-icon" type='img/png' href="/bumblewords/public/img/apple-touch-icon.png")
   body
     h1(class='noselect') bumblewords
     nav
-      a(href='/') back
+      a(href='/bumblewords') back
     ul#yesterday-wordlist
     script.
       const WORDS = JSON.parse('!{words}');
       const LETTERS = JSON.parse('!{letters}');
-    script(src="yesterday.js")
+    script(src="/bumblewords/public/yesterday.js")
         

@@ -268,7 +268,7 @@ function enterCurrentWord() {
         renderPoints();
         renderFoundWords();
         saveGame();
-        postData('/update');
+        postData('/bumblewords/update');
         if(foundWords.length === VALID_WORDS.length){
             alert("great job! you found all the words!")
         }
