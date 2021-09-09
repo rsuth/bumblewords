@@ -12,7 +12,7 @@ const PORT = 3000;
 const MIN_VALID_WORDS = 20;
 const PANGRAM_BONUS = 7;
 const dictionary = loadDictionary('dictionary.txt');
-const BANNED_LETTERS = ['K', 'E', 'S']
+const BANNED_LETTERS = []
 
 app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
