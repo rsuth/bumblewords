@@ -14,7 +14,7 @@ const PANGRAM_BONUS = 7;
 const dictionary = loadDictionary('dictionary.txt');
 const BANNED_LETTERS = ['K', 'E', 'S']
 
-//app.use(express.static('public'));
+app.use(express.static('public'));
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(loggerMiddleware);
