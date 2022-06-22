@@ -5,18 +5,18 @@ html
     meta(http-equiv='X-UA-Compatible' content='IE=edge')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     title bumblewords
-    link(rel='stylesheet', href='/bumblewords/public/bumblewords.css')
-    link(rel='stylesheet', href='/bumblewords/public/hexGrid.css')
-    link(rel="icon" type='img/ico' href="/bumblewords/public/img/favicon.ico")
-    link(rel="apple-touch-icon" type='img/png' href="/bumblewords/public/img/apple-touch-icon.png")
+    link(rel='stylesheet', href='/bumblewords.css')
+    link(rel='stylesheet', href='/hexGrid.css')
+    link(rel="icon" type='img/ico' href="/img/favicon.ico")
+    link(rel="apple-touch-icon" type='img/png' href="/img/apple-touch-icon.png")
   body
     h1(class='noselect') bumblewords
     // .ribbon.ribbon-top-right
     // span() 🎉Happy Bday <br>Brooke!!!🎉
     nav
-      a(href='bumblewords/leaderboard') leaderboard
+      a(href='/leaderboard') leaderboard
       |  | 
-      a(href='bumblewords/yesterday') yesterday's answers
+      a(href='/yesterday') yesterday's answers
       |  | 
       a(href='https://github.com/rsuth/bumblewords') github 
       |  | 
@@ -79,7 +79,7 @@ html
       const LETTERS = JSON.parse('!{letters}');
       const VALID_WORDS = JSON.parse('!{validWords}');
       const PANGRAM_BONUS = #{pangramBonus};
-    script(src="/bumblewords/public/game.js")  
+    script(src="/game.js")  
 
 
 

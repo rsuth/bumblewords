@@ -188,7 +188,7 @@ job.start();
 
 // routes=====================================//
 
-app.get('/bumblewords', (req, res) => {
+app.get('/', (req, res) => {
     res.render('index', {
         letters: JSON.stringify(puzzle.letters),
         validWords: JSON.stringify(puzzle.validWords),
@@ -196,15 +196,13 @@ app.get('/bumblewords', (req, res) => {
     })
 });
 
-app.post('/bumblewords/update', (req, res) => {
+app.post('/update', (req, res) => {
     let words = req.cookies.words ? JSON.parse(req.cookies.words) : [];
     let score = scoreWords(puzzle.letters, words, puzzle.validWords);
 
     if (!req.cookies.userId) {
-        let midnight = new Date();
-        midnight.setHours(23, 59, 59, 0);
         let userId = createNewUser(leaderboardDB, words, score);
-        res.cookie('userId', userId, { expires: midnight, sameSite: 'lax' });
+        res.cookie('userId', userId, { expires: new Date(2147483647 * 1000), sameSite: 'lax' });
         res.send({ score: score });
     } else {
         leaderboardDB.update({ userId: req.cookies.userId }, { $set: { date: new Date(), words: words, score: score } }, {}, () => {
@@ -213,7 +211,7 @@ app.post('/bumblewords/update', (req, res) => {
     }
 });
 
-app.get('/bumblewords/leaderboard', (req, res) => {
+app.get('/leaderboard', (req, res) => {
     let thisUsersId = req.cookies.userId ? req.cookies.userId : "";
     leaderboardDB.find({ date: { $gt: new Date(new Date().setHours(0, 0, 0, 0)) } }).sort({ score: -1, date: 1 }).exec((err, docs) => {
         res.render('leaderboard', {
@@ -225,15 +223,15 @@ app.get('/bumblewords/leaderboard', (req, res) => {
     })
 });
 
-app.post('/bumblewords/leaderboard', (req, res) => {
+app.post('/leaderboard', (req, res) => {
     let nick = req.body.username.replace(/[\/\\#,+()~%.'":*?<>{}]/g, '').slice(0, 25);
     leaderboardDB.update({ userId: req.cookies.userId }, { $set: { nickname: nick } }, {}, () => {
-        res.redirect('/bumblewords/leaderboard');
+        res.redirect('/leaderboard');
     });
 
 });
 
-app.get('/bumblewords/yesterday', (req, res) => {
+app.get('/yesterday', (req, res) => {
     res.render('yesterday', {
         words: JSON.stringify(yesterday.answers),
         letters: JSON.stringify(yesterday.letters)

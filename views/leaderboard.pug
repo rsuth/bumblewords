@@ -5,16 +5,16 @@ html
     meta(http-equiv='X-UA-Compatible' content='IE=edge')
     meta(name='viewport' content='width=device-width, initial-scale=1.0')
     title bumblewords
-    link(rel='stylesheet', href='/bumblewords/public/bumblewords.css')
-    link(rel='stylesheet', href='/bumblewords/public/leaderboard.css')
-    link(rel="icon" type='img/ico' href="/bumblewords/public/img/favicon.ico")
-    link(rel="apple-touch-icon" type='img/png' href="/bumblewords/public/img/apple-touch-icon.png")
+    link(rel='stylesheet', href='/bumblewords.css')
+    link(rel='stylesheet', href='/leaderboard.css')
+    link(rel="icon" type='img/ico' href="/img/favicon.ico")
+    link(rel="apple-touch-icon" type='img/png' href="/img/apple-touch-icon.png")
   body
     h1(class='noselect') bumblewords
     nav
-      a(href='/bumblewords') back to game
+      a(href='/') back to game
       |  | 
-      a(href='/bumblewords/yesterday') yesterday's answers
+      a(href='/yesterday') yesterday's answers
       |  | 
       a(id="darkmode-toggle" href="javascript:;") dark mode
   
@@ -23,7 +23,7 @@ html
     - var nickname = leaderboard.find(doc => doc.userId === userId) ? leaderboard.find(doc => doc.userId === userId).nickname : 'anonymous user'
     
     if showNickForm
-      form(id="name-form" action="/bumblewords/leaderboard", method="post")
+      form(id="name-form" action="/leaderboard", method="post")
           label(for="username") your nickname:  
           input(type="text", id="username" name="username", value= nickname required)
           input(type="submit", value="submit")
@@ -35,4 +35,4 @@ html
                 span(class="crown")= crown
                 span(class="userscore")= entry.score
                 span(class="username")= entry.nickname
-    script(src="/bumblewords/public/leaderboard.js")
+    script(src="/leaderboard.js")

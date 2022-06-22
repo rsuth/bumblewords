@@ -1,6 +1,11 @@
 function setCookie(name, value, exp, path = '/') {
-    const expires = exp.toUTCString();
-    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+    if (exp) {
+        const expires = exp.toUTCString();
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+    } else {
+        const expires = exp.toUTCString();
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+    }
 };
 
 function getCookie(name) {
@@ -12,24 +17,22 @@ function getCookie(name) {
 
 var darkMode = getCookie('darkMode') ? parseInt(getCookie('darkMode')) : 0;
 
-function toggleDarkMode(){
-    let midnight = new Date();
-    midnight.setHours(23,59,59,0);
-    
-    darkMode ^= true;
-    setCookie('darkMode', darkMode, midnight);
+function toggleDarkMode() {
 
-    if(darkMode){
+    darkMode ^= true;
+    setCookie('darkMode', darkMode);
+
+    if (darkMode) {
         document.body.classList.add('darkMode');
         document.querySelector('#darkmode-toggle').textContent = 'light mode';
-    }else {
+    } else {
         document.body.classList.remove('darkMode');
         document.querySelector('#darkmode-toggle').textContent = 'dark mode';
-    } 
+    }
 }
 
-document.addEventListener("DOMContentLoaded", ()=>{
-    if(darkMode !== 0){
+document.addEventListener("DOMContentLoaded", () => {
+    if (darkMode !== 0) {
         document.body.classList.add('darkMode');
         document.querySelector('#darkmode-toggle').textContent = 'light mode';
     }

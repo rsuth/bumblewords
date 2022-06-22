@@ -25,8 +25,12 @@ const successMessages = [
 ]
 
 function setCookie(name, value, exp, path = '/') {
-    const expires = exp.toUTCString();
-    document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+    if(exp){
+        const expires = exp.toUTCString();
+        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+    } else {
+        document.cookie = name + '=' + encodeURIComponent(value) + '; path=' + path + '; SameSite=Lax';
+    }
 };
 
 function getCookie(name) {
@@ -66,7 +70,7 @@ function saveGame(){
     
     setCookie('words', JSON.stringify(foundWords), midnight);
     setCookie('score', points, midnight);
-    setCookie('darkMode', darkMode, midnight);
+    setCookie('darkMode', darkMode);
 }
 
 function loadGame() {
@@ -268,7 +272,7 @@ function enterCurrentWord() {
         renderPoints();
         renderFoundWords();
         saveGame();
-        postData('/bumblewords/update');
+        postData('/update');
         if(foundWords.length === VALID_WORDS.length){
             alert("great job! you found all the words!")
         }
@@ -287,11 +291,9 @@ function deleteChar() {
 }
 
 function toggleDarkMode(){
-    let midnight = new Date();
-    midnight.setHours(23,59,59,0);
     
     darkMode ^= true;
-    setCookie('darkMode', darkMode, midnight);
+    setCookie('darkMode', darkMode);
 
     if(darkMode){
         document.body.classList.add('darkMode');
