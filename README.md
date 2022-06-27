@@ -9,4 +9,4 @@ There is also a leaderboard which shows the top scores.
 
 Inspired by the [New York Times Spelling Bee](https://www.nytimes.com/puzzles/spelling-bee) puzzle.
 
-Live demo [here](http://www.bumblewords.com).
+Live demo [here](https://bumblewords.com).
