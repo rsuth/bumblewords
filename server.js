@@ -5,6 +5,7 @@ import path from 'path';
 import { v4 as uuidv4 } from 'uuid';
 import nedb from 'nedb';
 import cookieParser from 'cookie-parser';
+import { appendFileSync } from 'fs';
 
 const app = express();
 const PORT = 3000;
@@ -237,6 +238,29 @@ app.get('/yesterday', (req, res) => {
         letters: JSON.stringify(yesterday.letters)
     });
 });
+
+app.get('/missing', (req, res) => {
+    res.render('missing', {
+        submitted: false,
+        error: false
+    });
+})
+
+app.post('/missing', (req, res) => {
+    if (/([a-zA-Z]+ ?)/.test(req.body.word)) {
+        console.log(`missing word(s) submitted: ${req.body.word}`);
+        appendFileSync('suggestions.txt', `${req.body.word}\n`.toUpperCase());
+        res.render('missing', {
+            submitted: true,
+            error: false
+        });
+    } else {
+        res.render('missing', {
+            submitted: false,
+            error: true,
+        });
+    }
+})
 
 app.listen(PORT, () => {
     console.log(`listening on port ${PORT}`);
