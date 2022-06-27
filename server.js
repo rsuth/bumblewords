@@ -249,7 +249,17 @@ app.get('/missing', (req, res) => {
 app.post('/missing', (req, res) => {
     if (/([a-zA-Z]+ ?)/.test(req.body.word)) {
         console.log(`missing word(s) submitted: ${req.body.word}`);
-        appendFileSync('suggestions.txt', `${req.body.word}\n`.toUpperCase());
+        req.body.word.split(' ').forEach((suggested) => {
+            let hit = dictionary.find((w) => {
+                return w === suggested.toUpperCase();
+            });
+            if (hit === undefined) {
+                console.log(`word reported missing and might be: ${suggested}`);
+                appendFileSync('suggestions.txt', `${suggested}\n`.toUpperCase());
+            } else {
+                console.log(`word reported missing but its not: ${suggested}`);
+            }
+        })
         res.render('missing', {
             submitted: true,
             error: false

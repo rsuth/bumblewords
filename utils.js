@@ -114,7 +114,7 @@ export const getLetterSet = (dictionary, minimumWords, banned) => {
     var letters = [];
     while (!done) {
         letters = letterGetter(banned);
-        
+
         let validWords = getValidWords(letters, dictionary);
         let pangram = false;
 
@@ -127,9 +127,9 @@ export const getLetterSet = (dictionary, minimumWords, banned) => {
         if (validWords.length > minimumWords && pangram) {
             done = true;
         }
-        
 
-        if(['I','N','G'].every(l => letters.includes(l))){
+
+        if (['I', 'N', 'G'].every(l => letters.includes(l))) {
             done = false;
         }
 

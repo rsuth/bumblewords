@@ -2,3 +2,4 @@
 *.db
 /tools/
 suggestions.txt
+.DS_STORE
