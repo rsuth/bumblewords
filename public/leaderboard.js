@@ -3,8 +3,7 @@ function setCookie(name, value, exp, path = '/') {
         const expires = exp.toUTCString();
         document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
     } else {
-        const expires = exp.toUTCString();
-        document.cookie = name + '=' + encodeURIComponent(value) + '; expires=' + expires + '; path=' + path + '; SameSite=Lax';
+        document.cookie = name + '=' + encodeURIComponent(value) + '; path=' + path + '; SameSite=Lax';
     }
 };
 
